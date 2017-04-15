@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html>
+<head>
+		<title ng-bind="backstageName"></title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+	<meta name="Keywords" content="系统，管理"/>
+	 <link href="/resources/css/bootstrap.min.css" rel="stylesheet">
+     <link href="/resources/css/sellerbase.css" rel="stylesheet">
+	
+    
+</head>
+   <body ng-app="mainApp" ng-controller="mainCtrl">
+  	<div ui-view></div>
+<!-- 按钮触发模态框 -->
+<button class="hide" data-toggle="modal" 
+   data-target="#myModal" id="mySellerModal">
+</button>
+	<!-- 模态框（Modal） -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" 
+   aria-labelledby="myModalLabel" aria-hidden="true">
+   <div class="modal-dialog" >
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close" 
+               data-dismiss="modal" aria-hidden="true" id="closeModal">
+                  &times;
+            </button>
+            <h4 class="modal-title" id="mySellerModalLabel">
+            </h4>
+         </div>
+         <div class="modal-body" id="mySellerModalBody">
+         </div>
+         <div class="modal-footer">
+         	<div id="errorSellerInfo" class="text-justify text-danger"></div>
+            <button type="button" class="btn btn-primary" id="sellerSubmit">
+               提交
+            </button>
+         </div>
+      </div><!-- /.modal-content -->
+</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+		<script src="/resources/js/jquery2.1.js"></script>
+		<script src="/resources/js/bootstrap3.2.0.js"></script>
+		<script src="/resources/js/angularjs.min.1.5.7.js"></script>
+		<script src="/resources/js/angular-animate.min.js"></script>
+		<script src="/resources/js/angular-ui-router.min.js"></script>
+        <script src="/resources/js/sortable.min.js"></script>
+       <script src="/resources/js/base64.js"></script> 
+       <script src="/ueditor/ueditor.config.js"></script> 
+       <script src="/ueditor/ueditor.all.min.js"></script> 
+       <script src="/ueditor/lang/zh-cn/zh-cn.js"></script> 
+       <script src="/resources/js/base.js"></script> 
+       <script type="text/javascript">
+       
+       angular.module('mainApp', ['ngAnimate','ui.router'])
+       .config(function ($stateProvider, $urlRouterProvider) {
+     	$urlRouterProvider.when("", "main");
+     	$stateProvider
+     	.state("main", {
+            url: "/main",
+            views: {
+                '': {
+                    templateUrl: '/seller/templates/main.html'
+                },
+                'topbar@main': {
+                    templateUrl: '/seller/templates/topbar.html'
+                },
+                'leftbar@main': {
+                    templateUrl: '/seller/templates/leftbar.html',
+                    controller:function(){
+                    	myUtils.myClickRotate("a.toCaret","span.caret");//箭头旋转
+                    }
+                } ,
+                'rightbody@main': {
+                    templateUrl: '/seller/templates/notice.html'
+                } 
+            }
+        })
+         .state("main.notice", {
+            url:"/notice",
+            views: {
+            	'rightbody@main': {
+                    templateUrl: "/seller/templates/notice.html"
+                } 
+            }
+        })
+         .state("main.domainList", {
+            url:"/domainList",
+            views: {
+            	'rightbody@main': {
+                    templateUrl: "/seller/templates/domain_list.html",
+                     controller:function($rootScope,$scope,$state){
+                     //如果不是超级管理员不能管理其他人的文章
+                   	if($rootScope.sessionrole_id!=1000 ){
+                   	location.href="/seller/main";
+                   	return;
+                   	}
+               $scope.domainList=[]; 		
+    		$scope.noMore=false;//false还有，true没有更多
+    		$scope.totalNumber=0;//总管理员数目
+ 			$scope.showPageNumberArray=[];//显示页面循环的数组 类似 1,2,3,4,5
+			$scope.totalPage=0;//总页数
+				
+			$scope.currentPage=1;//当前页
+			$scope.pageNumber=10;//每页显示数目
+			$scope.mostShowPageNumber=5;//设定最多显示页码数目	
+			$scope.pagination=myUtils.myPaginationHandler();
+			
+			//点击哪页显示哪页
+			$scope.toPage=function(content){
+			  if($scope.pagination.toPage(content,$scope.currentPage,$scope.totalPage)){
+			  //$scope.showNoticeListIcon=true;
+			  $scope.currentPage=$scope.pagination.currentPage;
+			  $scope.domainListInit();
+			  }
+			};
+			$scope.domainListInit=function(){
+			  $.get("/domain/count",function(cd){
+           		$scope.totalNumber=cd;             
+           //页码初始化
+          $scope.totalPage=$scope.pagination.getTotalPage($scope.totalNumber,$scope.pageNumber);//总页码数目     
+          $scope.showPageNumberArray=$scope.pagination.getShowPageNumber($scope.totalPage,$scope.pageNumber,$scope.mostShowPageNumber,$scope.currentPage);//显示页码数目 
+        //初始化
+  $.get("/domain/list?pageNum="+(($scope.currentPage-1)*$scope.pageNumber+1)+"&pageSize="+$scope.pageNumber,function(pld){
+           $scope.domainList=pld;
+			 console.log($scope.domainList)
+			$scope.$apply();
+               });
+       });
+			};
+			$scope.domainListInit();
+			
+				//切换域名名称
+    		$scope.toggleDomain=function(domain_id,name){
+    		$scope.newname=name;
+    		$scope.showName=domain_id;
+    		};
+    		//修改
+    		$scope.updateDomain=function(domain,newname){
+    		$scope.showName="";
+    		$scope.newname=newname;
+    		 $.post("/domain/update",
+    		 {
+    		 domain_id:domain.domain_id,
+    		 name:newname,
+    		 status:domain.status,
+    		 create_date:domain.create_date,
+    		 stop_date:domain.stop_date
+    		 },
+    		 function(data){
+    		if(data.code==200){
+    		domain.name=$scope.newname;
+    		$scope.$apply();
+    		myUtils.myLoadingToast("修改成功",null);
+    		}
+    		
+    		}); 
+    		};
+                     }
+                } 
+            }
+        }) 
+         .state("main.domainAdd", {
+            url:"/domainAdd",
+            views: {
+            	'rightbody@main': {
+                    templateUrl: "/seller/templates/domain_add.html",
+                     controller:function($rootScope,$scope){
+                     //如果不是超级管理员不能管理其他人的文章
+                   	if($rootScope.sessionrole_id!=1000 ){
+                   	location.href="/seller/main";
+                   	return;
+                   	}
+                     //增加域名
+                     $scope.addDomainForm=function(){
+                     $.get("/domain/add?name="+$scope.name,function(d){
+						$scope.name="";
+						$scope.$apply();
+    			  myUtils.myLoadingToast(d.msg, null);
+                     });
+                     
+                     };
+                     }
+                } 
+            }
+        }) 
+        .state("main.newsList", {
+            url:"/newsList/:manager_id",
+            views: {
+            	'rightbody@main': {
+                    templateUrl: "/seller/templates/news_list.html"
+                	,controller:function($rootScope,$scope,$state){
+                	$scope.safeDomain="http://"+location.host//domain为安全域名地址
+                	$scope.getDomain=function(){
+                	$.get("/domain/list?status=正常&pageNum=1&pageSize=1&orderName=domain_id&orderWay=asc",function(d){
+                	if(d){
+                	$scope.safeDomain="http://"+d[0].name;
+                	}
+                	});
+                	};
+                	$scope.getDomain();
+                	
+                	$scope.isEmail=false;//默认不显示邮件配置
+                	$scope.type="首页";//默认类型为首页，即都可以显示
+                	$scope.pageNum=1;
+                	$scope.pageSize=10;
+                   	$scope.changeMore=0;//默认
+                   	$scope.haveManagerId=false;//默认全部新闻显示，true时为单个广告主的所有新闻
+                   	if($state.params.manager_id && !isNaN($state.params.manager_id)){
+                   	$scope.manager_id=$state.params.manager_id;
+                   	$scope.haveManagerId=true;
+                   	}
+                   	//如果不是超级管理员不能管理其他人的文章
+                   	if($rootScope.sessionrole_id!=1000 && $rootScope.sessionmanager_id!=$scope.manager_id ){
+                   	location.href="/seller/main";
+                   	return;
+                   	}
+                		//新闻列表
+                   		function initData(a){
+                   		var initDataUrl="/news/dto/list?pageNum="+a.pageNum+"&pageSize="+a.pageSize+"&type="+a.type+"&orderName="+a.orderName+"&orderWay="+a.orderWay+"";
+                			if($scope.haveManagerId){
+                			initDataUrl="/news/dto/list?managerId="+$scope.manager_id+"&pageNum="+a.pageNum+"&pageSize="+a.pageSize+"&type="+a.type+"&orderName="+a.orderName+"&orderWay="+a.orderWay+"";
+                			}
+                			$.ajax({  
+                		          type : "get",  
+                		          url : initDataUrl,  
+                		          async : false,  
+                		          success : function(data){
+                		        	  if(data==''){
+                		        		  $("#addMore").hide();
+                		        		  return ;
+                		        	  }else{
+                		        		  $("#addMore").show();
+                		        		  
+                		        	  }
+                		        	if(a.pageNum>1){
+                		        		  for (var int = 0; int < data.length; int++) {
+                		        			$scope.newsList.push(data[int]); 
+                						}
+                		        	}else{
+              		        	 		$scope.newsList=data; 
+                		        	  }
+                		        	  myUtils.myPrevToast("加载完成", null, "remove");
+                		          }  
+                		          });  
+                		}
+                		//新闻类型列表
+                   		function initTypeData(){
+                   		var initTypeDataUrl="/news/types";
+                   		if($scope.haveManagerId){
+                			initTypeDataUrl="/news/types?managerId="+$scope.manager_id;
+                			}
+                			$.ajax({  
+                		          type : "get",  
+                		          url : initTypeDataUrl,  
+                		          async : true,  
+                		          success : function(data){
+                		        	  $scope.newsTypes=data;
+                		        	  $scope.$apply();
+                		        	  myUtils.myPrevToast("加载完成", null, "remove");
+                		          }  
+                		          });  
+                		}
+                   		//初始化
+                		initData({
+                			pageNum:$scope.pageNum,
+                			pageSize:$scope.pageSize,
+                			type:$scope.type,
+                			orderName:"time",
+                			orderWay:"desc"
+                			});	
+                			initTypeData();
+                   		//全部新闻列表
+                   		$scope.allNews=function(){
+                   		$scope.type="首页";
+                   		$scope.isEmail=false;
+                   		$scope.pageNum=1;
+                   			initData({
+                    			pageNum:$scope.pageNum,
+                    			pageSize:$scope.pageSize,
+                    			type:$scope.type,
+                    			orderName:"time",
+                    			orderWay:"desc"
+                    			});	
+                   			$("#addMore").show();//显示加载
+                   		};
+                   		//热门置顶新闻列表
+                   		function fixedRecommendNews(){
+                   		var fixedRecommendNewsUrl="/news/dto/list/random/fixedRecommend?pageNum="+$scope.pageNum+"&pageSize="+$scope.pageSize;
+                   		if($scope.haveManagerId){
+                			fixedRecommendNewsUrl="/news/dto/list/random/fixedRecommend?managerId="+$scope.manager_id+"&pageNum="+$scope.pageNum+"&pageSize="+$scope.pageSize;;
+                			}
+                   		//热门置顶
+          		        	$.ajax({  
+              		          type : "get",  
+              		          url :fixedRecommendNewsUrl,  
+              		          async : false,  
+              		          success : function(data){
+              		         if($scope.pageNum>1){
+                		        		  for (var int = 0; int < data.length; int++) {
+                		        			$scope.newsList.push(data[int]); 
+                						}
+                		      }else{
+              		        	 		$scope.newsList=data; 
+                		        	  }
+              		        	//$("#addMore").hide();//隐藏加载
+              		        	  myUtils.myPrevToast("加载完成", null, "remove");
+              		          }  
+              		          }); 
+                   		}
+                   		
+                   		$scope.fixedRecommendNews=function(){
+                   		$scope.isEmail=false;
+                   		$scope.pageNum=1;
+                   		$scope.changeMore=1;
+                   		fixedRecommendNews();
+                   		};
+                   		//推荐新闻列表
+                   		function isRecommendNews(){
+                   		var isRecommendNewsUrl="/news/dto/list/random/isRecommend?pageNum="+$scope.pageNum+"&pageSize="+$scope.pageSize;
+                   		if($scope.haveManagerId){
+                			isRecommendNewsUrl="/news/dto/list/random/isRecommend?managerId="+$scope.manager_id+"&pageNum="+$scope.pageNum+"&pageSize="+$scope.pageSize;
+                			}
+                   		//推荐
+            				$.ajax({  
+              		          type : "get",  
+              		          url :isRecommendNewsUrl ,  
+              		          async : false,  
+              		          success : function(data){
+              		        	  if($scope.pageNum>1){
+                		        		  for (var int = 0; int < data.length; int++) {
+                		        			$scope.newsList.push(data[int]); 
+                						}
+                		     	}else{
+              		        	 		$scope.newsList=data; 
+                		        	  }
+              		        	//$("#addMore").hide();//隐藏加载
+              		        	  myUtils.myPrevToast("加载完成", null, "remove");
+              		          }  
+              		          });  
+                   		}
+                   		
+                   		$scope.isRecommendNews=function(){
+                   		$scope.isEmail=false;
+                   		$scope.pageNum=1;
+                   		$scope.changeMore=2;
+                   		isRecommendNews();
+                   		};
+                   		//获取更多
+                		$scope.addMore=function(){
+                			$("#addMore").children().text("正在加载中...");
+                			//var pageNum=$(".listGroup").size()+1;
+                			$scope.pageNum=$scope.pageNum+$scope.pageSize;
+                			if($scope.changeMore==1){
+                			fixedRecommendNews();
+                			}else if($scope.changeMore==2){
+                			isRecommendNews();
+                			}else{
+                			initData({
+                    			pageNum:$scope.pageNum,
+                    			pageSize:$scope.pageSize,
+                    			type:$scope.type,
+                    			orderName:"time",
+                    			orderWay:"desc"
+                    			});
+                			}
+                						
+                			$("#addMore").children().text("点击加载更多》");
+                		}; 
+                		//修改new
+                		$scope.updateNew=function(newsdto,news,img_list){
+                			$("#mySellerModal").unbind().click();
+                			$("#mySellerModalLabel").html("修改新闻");
+                			$("#mySellerModalBody").parent().css("width","900px");
+							//循环图片
+							var imgString="";
+							for(var z=0;z<img_list.length;z++){
+							imgString+="<div class='comment-input-margin '> <input type='file' class='comment-input' id='newsFileUpload"+img_list[z].number+"'  ><div>"+
+							"<img style='width:300px;height: 200px;' src='"+img_list[z].img_address+"' id='updateImgId"+img_list[z].number+"'/></div></div>";
+							}
+							console.log(imgString)
+                			$("#mySellerModalBody").html(
+                					"<form>"+
+									" <label for='updateNewsTitle' class='text-danger'>※新闻标题（必填）</label>"+
+									" 	<div class='comment-input-margin'>"+
+									" 	<input type='text' class=' comment-input' id='updateNewsTitle'  placeholder='输入新闻标题'>"+
+									" </div>"+
+									"  <label for='updateNewsType' class='text-danger'>※新闻类型（必填）</label>"+
+									"<div class='comment-input-margin '>"+
+									"   <input type='text' class='comment-input' id='updateNewsType'  placeholder='输入新闻类型'>"+
+									" </div>"+
+									"  <label  class='text-danger'>※封面图片url</label>"+
+									imgString+
+									 "<label  class='text-danger'>※是否置顶，默认否</label>"+
+									  "<div class='comment-input-margin '>"+
+									    "<input type='radio' name='radioFixedRecommend' class='disableFixedRecommend' value='0'/>否"+
+										"<input type='radio' name='radioFixedRecommend' class='disableFixedRecommend' value='1'/>是<br>"+
+									 " </div>"+
+									   " <label  class='text-danger'>※是否热门推荐，默认否</label>"+
+									 "<div class='comment-input-margin '>"+
+									   " <input type='radio' name='radioIsRecommend' class='disableIsRecommend' value='0'/>否"+
+										"<input type='radio' name='radioIsRecommend' class='disableIsRecommend' value='1'/>是<br>"+
+									 " </div>"+
+									"  <label for='updateNewsContent' class='text-danger'>※新闻内容（必填）</label>"+
+								    " <div class='comment-input-margin'>"+
+									"  <script id='editor2' type='text/plain' style='width:800px;z-index:10000'><//script>"+
+									"</div>"+
+									"</form>");
+                			//增加富文本编辑器初始化
+                     	   	UE.delEditor('editor2');//删除获取实例
+        
+                 			var	ue = UE.getEditor('editor2');//获取实例，有就得到，没有就创建
+                 			function initForm(){
+                 				$.get("/news/dto/"+news.news_id,function(data){
+                 					console.log(data)
+                 					$("#updateNewsTitle").val(data.news.title);
+                 					$("#updateNewsType").val(data.news.type);
+                 					
+                 						console.log(data)
+                 						//初始化禁用双选
+                 						function initDisableRecommend(_this,element){
+                 							if($(_this).val()=="1"){
+                 								$(element).prop("disabled","true");
+                 							}else{
+                 								$(element).prop("disabled","");
+                 							}
+                 						}
+                 						
+                 						$("input[name='radioFixedRecommend']").each(function(){
+                 						
+                 						if(data.news.fixed_recommend==$(this).val()){
+                 						$(this).prop("checked","checked"); 
+                 						initDisableRecommend(this,"input[name='radioIsRecommend']");
+                 						}
+                 						if(!data.news.fixed_recommend){
+                 							$("input[name='radioFixedRecommend']").eq(0).prop("checked","checked"); 
+                 							
+                 						}
+                 						
+                 						$(this).on("change",function(){
+                 						initDisableRecommend(this,"input[name='radioIsRecommend']");
+                 						});
+                 						});
+                 						
+                 						$("input[name='radioIsRecommend']").each(function(){
+                 						if(data.news.is_recommend==$(this).val()){
+                 						$(this).prop("checked","checked"); 
+                 						initDisableRecommend(this,"input[name='radioFixedRecommend']");
+                 						}
+                 						if(!data.news.is_recommend){
+                 							$("input[name='radioIsRecommend']").eq(0).prop("checked","checked"); 
+                 							
+                 						}
+                 						
+                 						$(this).on("change",function(){
+                 							initDisableRecommend(this,"input[name='radioFixedRecommend']");
+                 						});
+                 						});
+                 					ue.ready(function(){
+                 					ue.setContent(data.news.content);
+                 					});
+                 					
+                 				});
+                 			}
+                 			initForm();
+                 			//上传新闻封面图片
+                 		for(var zz=0;zz<img_list.length;zz++){
+                         (function(zz){
+
+                 		$("#newsFileUpload"+img_list[zz].number).change( function(){
+                 		//var imgListNumber=$(this).attr("id").split("newsFileUpload")[1];
+                 		//console.log(imgListNumber)
+                 			myUtils.fileUpload(
+                 				    {inputfile:$("#newsFileUpload"+img_list[zz].number),
+                 				    ajaxObj:{
+                 				        formData:[
+                 				            {key:"testFileUpload",value:$("#newsFileUpload"+img_list[zz].number).get(0).files[0]}
+                 				            ],
+                 				        url:"/news/img/add",
+                 				        success:function(data){
+                 				            if(data){
+                 				            myUtils.myPrevToast("上传成功",null,"remove");
+                 				          news.img_address=data;
+                 				          //console.log(img_list[imgListNumber-1].img_address)
+                 				          img_list[zz].img_address=data;
+                 				          $("#updateImgId"+img_list[zz].number).attr("src",img_list[zz].img_address);
+                 				            }
+                 				        }
+                 				    }
+                 				}
+                 				);
+                 		});
+
+                         })(zz);    
+                 		}
+                 		console.log(newsdto)
+                 		console.log(news)
+                 		console.log(img_list)
+                 			//提交更新表单
+                 			$("#sellerSubmit").unbind().click(function(){
+                 				var news_id=news.news_id;
+                 				var title=$("#updateNewsTitle").val().trim();
+                        		var type=$("#updateNewsType").val().trim();
+                        		var radioFixedRecommend=$("input[name='radioFixedRecommend']:checked").val();
+                        		var radioIsRecommend=$("input[name='radioIsRecommend']:checked").val();
+                        		var img_address=news.img_address;
+                        		var content=ue.getContent();
+                 					
+                        		console.log(radioFixedRecommend)
+                        		myUtils.myPrevToast("修改中", function(){
+                        		$.ajax({  
+                  		          type : "post",  
+                  		          url : "/news/dto/update",
+                  		          contentType:'application/json',  
+                  		          data:JSON.stringify({
+              		          news:{  news_id:news_id,
+              		          		  title:title,
+              		          		  type:type,
+              		          		  img_address:img_address,
+              		        	      fixed_recommend:radioFixedRecommend,
+              		        	  	  is_recommend:radioIsRecommend,
+              		        	  	  time:news.time,
+              		        	      content:content},
+              		          img_list:angular.fromJson(angular.toJson(img_list))
+              		        	  }),  
+                  		          async : true,  
+                  		          success : function(data){
+                  		        	if(data.code==200){
+                  		   			$("#closeModal").click();
+                  		        	  myUtils.myPrevToast("修改成功", null, "remove");
+                  		   			//location.reload();
+                  		   			$scope.newsList[$scope.newsList.indexOf(newsdto)].news.title=title;
+                  		   			$scope.newsList[$scope.newsList.indexOf(newsdto)].news.type=type;
+                  		   			$scope.newsList[$scope.newsList.indexOf(newsdto)].news.img_address=img_address;
+                  		   			$scope.newsList[$scope.newsList.indexOf(newsdto)].news.time=news.time;
+                  		   			$scope.newsList[$scope.newsList.indexOf(newsdto)].news.fixed_recommend=radioFixedRecommend;
+                  		   			$scope.newsList[$scope.newsList.indexOf(newsdto)].news.is_recommend=radioIsRecommend;
+                  		   			$scope.newsList[$scope.newsList.indexOf(newsdto)].news.content=content;
+                  		   			$scope.newsList[$scope.newsList.indexOf(newsdto)].img_list=img_list;
+                  		   			$scope.$apply();
+                  		   			/* $("#updateNewsTitle").val(title);
+                 					$("#updateNewsType").val(type);
+                 					ue.ready(function(){
+                 					ue.setContent(content);
+                 					}); */
+                  		        	 initTypeData();//初始化类型列表
+                  		        	  return;
+                  		        	  }
+                  		        	  myUtils.myPrevToast("修改失败", null, "remove");
+                  		          }  
+                  		          });  
+                        		}, "add");
+                			});
+                		};
+                		//删除new
+                		$scope.deleteNew=function(news){
+                			myUtils.myLoginOut("确定删除吗？", function(){
+                   				$.get("/news/"+news.news_id+"/delete",function(data){
+                   					console.log($scope.newsList)
+                   	   				if(data.code==200){
+                   	   				$scope.newsList.splice($scope.newsList.indexOf(news), 1);
+                   	   				//$scope.newsList.splice(news.news_id,1);
+                   	   				$scope.$apply();
+                   	   				initTypeData();//初始化类型列表
+                   	   				myUtils.myLoadingToast("删除成功", null); 
+                   	   				
+                   	   				}else{
+                   	   					myUtils.myLoadingToast("删除失败", null);   	   				
+                   	   				}
+                   	   			});
+                   			});
+                			
+                		};
+                		//切换为邮件配置
+                		$scope.changeEmail=function(){
+                		$scope.isEmail=true;
+                		};
+                		//保存邮件配置、存储在localstorage
+                		$scope.mailServerHost='smtp.mxhichina.com';
+                		$scope.mailServerPort='25';
+                		$scope.userName='benzhenchayuan@yayao8.com';
+                		$scope.password='yayao123+++';
+                		$scope.toAddress='278076304@qq.com';
+                		$scope.saveEmail=function(){
+                		var emailInfo={
+                		"mailServerHost":$scope.mailServerHost,
+                		"mailServerPort":$scope.mailServerPort,
+                		"userName":$scope.userName,
+                		"password":$scope.password,
+                		"toAddress":$scope.toAddress
+                		};
+                		localStorage.setItem("emailInfo", JSON.stringify(emailInfo));
+                		myUtils.myLoadingToast("保存成功",null);
+                		};
+                		//发送邮件
+                		$scope.emailNew=function(news){
+                		if(localStorage.getItem("emailInfo")){
+                		var emailInfo=JSON.parse(localStorage.getItem("emailInfo"));
+                		$scope.mailServerHost=emailInfo.mailServerHost;
+                		$scope.mailServerPort=emailInfo.mailServerPort;
+                		$scope.userName=emailInfo.userName;
+                		$scope.password=emailInfo.password;
+                		$scope.toAddress=emailInfo.toAddress;
+                		}
+                		console.log(emailInfo)
+                		myUtils.myLoginOut("确定发送吗？", function(){
+                   				$.get("/news/email/"+news.news_id+
+                   				"?mailServerHost="+$scope.mailServerHost+
+                   				"&mailServerPort="+$scope.mailServerPort+
+                   				"&userName="+encodeURIComponent($scope.userName)+
+                   				"&password="+encodeURIComponent($scope.password)+
+                   				"&toAddress="+encodeURIComponent($scope.toAddress),
+                   				function(data){
+                   				console.log(data)
+                   	   				if(data.code==200){
+                   	   				myUtils.myLoadingToast("发送成功", null); 
+                   	   				
+                   	   				}else{
+                   	   					myUtils.myLoadingToast("发送失败", null);   	   				
+                   	   				}
+                   	   			});
+                   			});
+                		
+                		};
+                		//点击显示该类型列表
+                		$scope.list=function(type){
+                		$scope.type=type;
+                		$scope.pageNum=1;
+                		//初始化
+                		initData({
+                			pageNum:$scope.pageNum,
+                			pageSize:$scope.pageSize,
+                			type:$scope.type,
+                			orderName:"time",
+                			orderWay:"desc"
+                			});	
+                		};
+                    }
+            	} 
+            }
+        })
+        .state("main.newsAdd", {
+            url:"/newsAdd/:manager_id",
+            views: {
+            	'rightbody@main': {
+                    templateUrl: "/seller/templates/news_add.html",
+                    controller:function($rootScope,$scope,$state){
+                    	$scope.haveManagerId=false;//默认全部新闻显示，true时为单个广告主的所有新闻
+                   	if($state.params.manager_id && !isNaN($state.params.manager_id)){
+                   	$scope.manager_id=$state.params.manager_id;
+                   	$scope.haveManagerId=true;
+                   	}
+                   		//如果不是超级管理员不能管理其他人的文章
+                   	if($rootScope.sessionrole_id!=1000 && $rootScope.sessionmanager_id!=$scope.manager_id ){
+                   	location.href="/seller/main";
+                   	return;
+                   	}
+                    	//增加富文本编辑器初始化
+                     	   	UE.delEditor('editor');//删除获取实例
+                 			var	ue = UE.getEditor('editor');//获取实例，有就得到，没有就创建
+                 			$scope.fixedRecommend="0";//默认置顶否
+                 			$scope.isRecommend="0";//默认推荐否
+                 			$scope.disableFixedRecommend=false;
+                 			$scope.disableIsRecommend=false;
+                 			$scope.$watch("fixedRecommend",function(){
+                 			if($scope.fixedRecommend=="1"){
+                 				$scope.disableIsRecommend=true;
+                 			}else{
+                 				$scope.disableIsRecommend=false;
+                 			}
+                 			});
+                 			$scope.$watch("isRecommend",function(){
+                 			if($scope.isRecommend=="1"){
+                 				$scope.disableFixedRecommend=true;
+                 			}else{
+                 				$scope.disableFixedRecommend=false;
+                 			}
+                 			});
+                 			
+                 			console.log($scope.fixedRecommend)
+                 			
+                 			$scope.imgList=[];//图片列表对象；
+                 		//上传新闻封面图片
+                 		$("#newsFileUpload").change(function(){
+                 			//最多上传三张
+                 			 if($scope.imgList.length>=3){
+                 			 myUtils.myLoadingToast("最多上传三张");
+                 			 return;
+                 			 }
+                 			myUtils.fileUpload(
+                 				    {inputfile:$("#newsFileUpload"),
+                 				    ajaxObj:{
+                 				        formData:[
+                 				            {key:"testFileUpload",value:$("#newsFileUpload").get(0).files[0]}
+                 				            ],
+                 				        url:"/news/img/add",
+                 				        success:function(data){
+				                 			var img={
+				                 			img_id:'',
+				                 			img_address:'',
+				                 			number:'',
+				                 			news_id:''
+				                 			};
+                 				            if(data){
+                 				            myUtils.myPrevToast("上传成功",null,"remove");
+                 				            img.number=$scope.imgList.length+1;
+                 				           img.img_address=data;
+                 				            $scope.imgList.push(img);
+                 				            console.log(JSON.parse(angular.toJson($scope.imgList)))
+                 				            $scope.$apply();
+                 				            }
+                 				        }
+                 				    }
+                 				}
+                 				);
+                 		});
+                 			
+                     	    //提交表单
+                    	$scope.addNewsForm=function(){
+                    		var title=$scope.addNewsTitle;
+                    		var type=$scope.addNewsType;
+                    		var fixedRecommend=$scope.fixedRecommend;
+                    		var isRecommend=$scope.isRecommend;
+                    		var content=ue.getContent();
+                    		//var imgUrl=$scope.imgUrl;
+                    		var unitPrice=$scope.addNewsUnitPrice;
+                    		var totalPrice=$scope.addNewsTotalPrice;
+                    		if(!/(^[+]?[1-9]\d*(\.\d{1,2})?$)|(^[+]?[0]{1}(\.\d{1,2})?$)/.test(unitPrice)){
+                    		return myUtils.myLoadingToast("单价必须为大于零的两位小数",null);
+                    		}
+                    		if(!/(^[+]?[1-9]\d*(\.\d{1,2})?$)|(^[+]?[0]{1}(\.\d{1,2})?$)/.test(totalPrice)){
+                    		return myUtils.myLoadingToast("总额必须为大于零的两位小数",null);
+                    		}
+                    		if(totalPrice/unitPrice<1 ){
+                    		return myUtils.myLoadingToast("总额必须大于单价",null);
+                    		}
+                    		if(!$scope.imgList[0]){
+                    		return myUtils.myLoadingToast("至少一张图片",null);
+                    		}
+                    		
+                    		var manager_id=1000;
+                   		if($scope.haveManagerId){
+                   		manager_id=$scope.manager_id
+                   		}
+                    		myUtils.myPrevToast("添加中", function(){
+                    		$.ajax({  
+              		          type : "post",  
+              		          url : "/news/dto/add",  
+              		          contentType:"application/json",  
+              		          data:JSON.stringify({
+              		          news:{title:title,
+              		          		  type:type,
+              		          		  img_address:$scope.imgList[0].img_address,
+              		        	      fixed_recommend:fixedRecommend,
+              		        	  	  is_recommend:isRecommend,
+              		        	  	  time:myUtils.timeStampToDate(new Date()),
+              		        	  	  unit_price:$scope.addNewsUnitPrice,
+              		        	  	  total_price:$scope.addNewsTotalPrice,
+              		        	  	  manager_id:manager_id,
+              		        	      content:content},
+              		          img_list:angular.fromJson(angular.toJson($scope.imgList))
+              		        	  }),
+              		          async : true,  
+              		          success : function(data){
+              		        	if(data.code==200){
+              		        	$scope.addNewsTitle="";
+              		        	$scope.addNewsType="";
+              		        	//$scope.imgUrl="";
+              		        	$scope.imgList=[];
+              		        	$scope.fixedRecommend="0";//默认置顶否
+                     			$scope.isRecommend="0";//默认推荐否
+                     			$scope.addNewsUnitPrice="0";
+                     			$scope.addNewsTotalPrice="0";
+              		        	$scope.$apply();
+              		        	ue.setContent("");
+              		        	  myUtils.myPrevToast("添加成功", null, "remove");
+              		        	  return;
+              		        	  }
+              		        	  myUtils.myPrevToast("添加失败", null, "remove");
+              		          }  
+              		          });  
+                    		}, "add");
+             			};
+                    }
+                } 
+            }
+        })
+        .state("main.advertiserList", {
+            url:"/advertiserList",
+            views: {
+            	'rightbody@main': {
+                    templateUrl: "/seller/templates/advertiser_list.html",
+                     controller:function($rootScope,$scope,$state){
+                     //如果不是超级管理员不能管理其他人的文章
+                   	if($rootScope.sessionrole_id!=1000 ){
+                   	location.href="/seller/main";
+                   	return;
+                   	}
+                //跳转新闻列表
+    			$scope.managerNewList=function(manager_id){
+    			$state.go("main.newsList",{manager_id:manager_id});
+    			}
+                //跳转增加新闻列表
+    			$scope.managerNewAdd=function(manager_id){
+    			$state.go("main.newsAdd",{manager_id:manager_id});
+    			}
+               $scope.managerList=[]; 		
+    		$scope.noMore=false;//false还有，true没有更多
+    		$scope.totalNumber=0;//总管理员数目
+ 			$scope.showPageNumberArray=[];//显示页面循环的数组 类似 1,2,3,4,5
+			$scope.totalPage=0;//总页数
+				
+			$scope.currentPage=1;//当前页
+			$scope.pageNumber=10;//每页显示数目
+			$scope.mostShowPageNumber=5;//设定最多显示页码数目	
+			$scope.pagination=myUtils.myPaginationHandler();
+			
+			//点击哪页显示哪页
+			$scope.toPage=function(content){
+			  if($scope.pagination.toPage(content,$scope.currentPage,$scope.totalPage)){
+			  //$scope.showNoticeListIcon=true;
+			  $scope.currentPage=$scope.pagination.currentPage;
+			  $scope.managerListInit();
+			  }
+			};
+			$scope.managerListInit=function(){
+			  $.get("/manager/count?roleId=1001",function(cd){
+           		$scope.totalNumber=cd;             
+           //页码初始化
+          $scope.totalPage=$scope.pagination.getTotalPage($scope.totalNumber,$scope.pageNumber);//总页码数目     
+          $scope.showPageNumberArray=$scope.pagination.getShowPageNumber($scope.totalPage,$scope.pageNumber,$scope.mostShowPageNumber,$scope.currentPage);//显示页码数目 
+        //初始化
+  $.get("/manager/list?roleId=1001&pageNum="+(($scope.currentPage-1)*$scope.pageNumber+1)+"&pageSize="+$scope.pageNumber,function(pld){
+           $scope.managerList=pld;
+			 console.log($scope.managerList)
+			$scope.$apply();
+               });
+       });
+			};
+			$scope.managerListInit();
+                     }
+                } 
+            }
+        }) 
+         .state("main.advertiserAdd", {
+            url:"/advertiserAdd",
+            views: {
+            	'rightbody@main': {
+                    templateUrl: "/seller/templates/advertiser_add.html",
+                     controller:function($rootScope,$scope){
+                     //如果不是超级管理员不能管理其他人的文章
+                   	if($rootScope.sessionrole_id!=1000 ){
+                   	location.href="/seller/main";
+                   	return;
+                   	}
+                     //增加广告主
+                     $scope.addAdvertiserForm=function(){
+                     $.get("/manager/add?name="+$scope.name+"&managerPhone="+$scope.manager_phone+"&managerPassword="+$scope.manager_password,function(d){
+						$scope.name="";
+						$scope.manager_phone="";
+						$scope.manager_password="";
+						$scope.$apply();
+    			  myUtils.myLoadingToast(d.msg, null);
+                     });
+                     
+                     };
+                     }
+                } 
+            }
+        }) 
+        .state("main.adsense", {
+            url:"/adsense",
+            views: {
+            	'rightbody@main': {
+                    templateUrl: "/seller/templates/news_adsense.html",
+                    controller:function($rootScope,$scope){
+                    //如果不是超级管理员不能管理其他人的文章
+                   	if($rootScope.sessionrole_id!=1000 ){
+                   	location.href="/seller/main";
+                   	return;
+                   	}
+                    	$("#adsenseIndexIframe").attr("src",location.protocol+"//"+location.host+"/dailyRecommended/index");
+                    	$("#adsenseDetailsIframe").attr("src",location.protocol+"//"+location.host+"/dailyRecommended/news_details?type=八卦&news_id=9302");
+                    	//切换
+                    	$scope.adsenseIndexBtn=function(){
+                    		if(!$("#adsenseIndexBtn").hasClass("btn-info")){
+                    			$("#adsenseDetailsBtn").removeClass("btn-info");
+                    			$("#adsenseIndexBtn").addClass("btn-info");
+                    		}
+                    		$("#adsenseDetailsModel").hide();
+                    		$("#adsenseIndexModel").show();
+                    	}
+                    	//切换
+                    	$scope.adsenseDetailsBtn=function(){
+                    		if(!$("#adsenseDetailsBtn").hasClass("btn-info")){
+                    			$("#adsenseIndexBtn").removeClass("btn-info");
+                    			$("#adsenseDetailsBtn").addClass("btn-info");
+                    		}
+                    		$("#adsenseIndexModel").hide();
+                    		$("#adsenseDetailsModel").show();
+                    	}
+                    	//提交js代码
+                    	$scope.adsenseIndexCodeBtn=function(){
+                    		var tp=0;//0 为男人帮首页
+                    		var manIndexCode=$scope.adsenseIndexCode;
+                    		myUtils.myPrevToast("添加中", function(){
+                    		$.post("/adsense/add",{type:tp,content:manIndexCode}
+                    		,function(data){
+                    			if(data.code==200){
+                  		        myUtils.myPrevToast("添加成功", null, "remove");
+                  		      $("#adsenseIndexIframe").attr("src",location.protocol+"//"+location.host);
+                    			}
+                    		});
+                    		},"add");
+                    	};
+                    	$scope.adsenseDetailsCodeBtn=function(){
+                    		var tp=1;//1为男人帮详情页
+                    		var manDetailsCode=$scope.adsenseDetailsCode;
+                    		myUtils.myPrevToast("添加中", function(){
+                    		$.post("/adsense/add",{type:tp,content:manDetailsCode}
+                    		,function(data){
+                    			if(data.code==200){
+                  		        myUtils.myPrevToast("添加成功", null, "remove");
+                          	$("#adsenseDetailsIframe").attr("src",location.protocol+"//"+location.host+"/dailyRecommended/news_details?type=八卦&news_id=9302");
+                    			}
+                    		});
+                    		},"add");
+                    		
+                    	};
+                    }
+                } 
+            }
+        });
+       
+		})
+       .controller('mainCtrl', function($rootScope,$scope,$http) {
+       $scope.backstageName="微信推广系统";//系统名称
+    	 //设置高度
+    	 setInterval(function(){
+			$(".seller-main-body").height($(".seller-main-body-right").height()+50);
+    		 
+    	 }, 300);
+    	 //验证是否已经登录
+    		$.get("/manager/isLogin",function(data){
+       			console.log(data)
+       			$scope.manager_phone=data.manager_phone;
+       			$rootScope.sessionmanager_id=data.manager_id;
+       			$rootScope.sessionrole_id=data.role_id;
+       		if(data==null||data==''){
+       			location.replace("/seller/index");
+       		}
+       	});
+   		//登录退出
+   		$scope.sellerLoginOut=function(){
+   			myUtils.myLoginOut("确定退出吗？", function(){
+   				$.get("/manager/loginOut",function(data){
+   	   				if(data.code==200){
+   	   					myUtils.myLoadingToast("退出成功", null);   	   				
+   						location.replace("/seller/index");
+   	   				}else{
+   	   					myUtils.myLoadingToast("退出失败", null);   	   				
+   	   				}
+   	   			});
+   			});
+   		};
+   		
+   		
+		//新闻初始化
+		$scope.newsInit={
+				news_id:6160,
+				img_address:'http://t.kejixun.com/uploadfile/2016/0804/20160804024053197.jpg',
+    			title:'手机支付流行，小偷开始猖獗',
+    			type:'奇闻',
+    			time:'2016-08-04 14:40:53',
+    			content:">· 对商家而言，很难判别顾客究竟是遗漏扫码，还是不会扫码；</p>"
+    				+" <p>· 数据显示，采用自助扫码技术的商家，失窃率比同业平均水平高出122%；</p>"
+    				  +"<p>· 商家频繁地捉到小偷，并且小偷会承认犯罪。</p>"
+    				  +"<p>Hopkins表示：“许多商家开始认识到了这些问题，开始采取措施来提醒相关风险，并确保购物篮中所有商品都被扫码且打印在收据上。”</p>"
+    				  +" <p>“零售业的所有创新都是商业选择——处于购买体验更愉悦与商家利润更丰厚的考量。但同时也可能带来一些消极结果，例如失窃率增加。”</p>"
+    				  +"<p>该研究显示，商家的一些选择或许会招致一些出乎预料的行为和结果。</p> "
+    				 +"</div></div>"
+    			};
+		
+   		});			
+     
+		</script>
+        </body>
+</html>

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="com.nieyue.dao.ManagerDao">
+
+<!-- 添加 账户-->
+<insert id="addManager" parameterType="Manager" keyProperty="managerId"  flushCache="true" >  
+   INSERT IGNORE INTO
+   		 manager_tb (
+   		 name,
+   		 manager_phone,
+   		 manager_password,
+   		 create_date,
+   		 last_login_date,
+   		 role_id)
+   VALUES
+    	 (
+    	 #{name},
+    	 #{managerPhone},
+    	 #{managerPassword},
+    	 #{createDate},
+    	 #{lastLoginDate},
+    	 #{roleId})  
+</insert>  
+<!-- 更新账户 -->
+<update id="updateManager" parameterType="Manager">  
+    UPDATE 
+    	manager_tb 
+    SET 
+    	name=#{name},
+    	manager_phone=#{managerPhone},
+    	manager_password=#{managerPassword},
+    	create_date=#{createDate},
+    	last_login_date=#{lastLoginDate},
+    	role_id=#{roleId}
+    WHERE
+    	 manager_id=#{managerId}  
+</update> 
+<!-- 账户登录-->
+<select id="managerLogin"  resultType="Manager">  
+    SELECT
+	 	manager_id,
+	 	name,
+	 	manager_phone,
+	 	manager_password,
+	 	create_date,
+	 	last_login_date,
+	 	role_id
+	FROM manager_tb
+	WHERE manager_phone=#{name} and manager_password=#{password}
+</select>
+
+<!-- 分页账户-->
+<select id="browsePagingManager" resultType="Manager">  
+    SELECT
+	    manager_id,
+	    name,
+	 	manager_phone,
+	 	manager_password,
+	 	create_date,
+	 	last_login_date,
+	 	role_id
+	FROM manager_tb
+	<where>
+	<if test="roleId!=null">
+	AND role_id=#{roleId}
+	</if>
+	</where>
+	ORDER BY
+		${orderName}  ${orderWay}
+	LIMIT
+		#{pageNum},#{pageSize}
+</select>   
+<!--所有登录手机号-->
+<select id="browseAllManagerPhone" resultType="String">  
+    SELECT
+   		 manager_phone
+	FROM manager_tb
+</select> 
+	<!-- 统计记录条数 -->
+<select id="countAll"  resultType="int">  
+	SELECT
+	 	count(manager_id)
+	FROM manager_tb
+	<where>
+	<if test="roleId!=null">
+	AND role_id=#{roleId}
+	</if>
+	</where>
+</select> 
+</mapper>

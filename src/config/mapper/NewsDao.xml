@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="com.nieyue.dao.NewsDao">
+<!-- 添加新闻-->
+<insert id="addNews" parameterType="News" keyProperty="newsId" flushCache="true"  >  
+   INSERT IGNORE INTO
+   		news_tb 
+   		 (type,
+   		 title,
+   		 time,
+   		 fixed_recommend,
+   		 is_recommend,
+   		 img_address,
+   		 content,
+   		 unit_price,
+   		 total_price,
+   		 reading_number,
+   		 now_total_price,
+   		 status,
+   		 manager_id)
+   VALUES
+    	 (#{type},
+    	 #{title},
+    	 #{time},
+    	 #{fixedRecommend},
+    	 #{isRecommend},
+    	 #{imgAddress},
+    	 #{content},
+    	 #{unitPrice},
+    	 #{totalPrice},
+    	 #{readingNumber},
+    	 #{nowTotalPrice},
+    	 #{status},
+    	 #{managerId})  
+</insert>  
+<!-- 更新新闻 -->
+<update id="updateNews" parameterType="News" >  
+    UPDATE 
+    	news_tb 
+    SET 
+    	news_id=#{newsId},
+    	type=#{type},
+    	title=#{title},
+    	time=#{time},
+    	fixed_recommend=#{fixedRecommend},
+    	is_recommend=#{isRecommend},
+    	img_address=#{imgAddress},
+    	content=#{content},
+    	unit_price=#{unitPrice},
+    	total_price=#{totalPrice},
+    	reading_number=#{readingNumber},
+    	now_total_price=#{nowTotalPrice},
+    	status=#{status},
+    	manager_id=#{managerId}
+    WHERE
+    	 news_id=#{newsId}  
+</update> 
+<!-- 删除新闻  -->
+<delete id="delNews"  parameterType="Integer" >  
+    DELETE FROM
+    	 news_tb WHERE news_id=#{newsId}
+</delete>  
+<!-- 删除重复新闻  -->
+<delete id="delNewsReview" >
+  DELETE FROM
+		news_tb where news_id in (select news_id from (select  max(news_id) as news_id,count(title) as count from news_tb group by title having count >1 order by count desc) as tab ) 
+
+ </delete>  
+<!-- 加载单个新闻-->
+<select id="loadNews" parameterType="Integer"  resultType="News" >
+SELECT 
+	    news_id,
+    	type,
+    	title,
+    	time,
+    	fixed_recommend,
+    	is_recommend,
+    	img_address,
+    	content,
+    	unit_price,
+    	total_price,
+    	reading_number,
+    	now_total_price,
+    	status,
+    	manager_id
+FROM news_tb 
+WHERE news_id=#{newsId}
+</select>
+<!-- 根据标题分页查询新闻 -->
+<select id="browsePagingNewsByTitle" resultType="News">  
+    SELECT
+	    news_id,
+    	type,
+    	title,
+    	time,
+    	fixed_recommend,
+    	is_recommend,
+    	img_address,
+    	<!--content,-->
+    	unit_price,
+    	total_price,
+    	reading_number,
+    	now_total_price,
+    	status,
+    	manager_id
+	FROM news_tb
+	<where>
+	<if test="title!=null">
+	AND title like '%' #{title} '%'
+	</if>
+	<if test="managerId!=null">
+	AND manager_id=#{managerId}
+	</if>
+	</where>
+	ORDER BY
+		${orderName}  ${orderWay}
+	LIMIT
+		#{pageNum},#{pageSize}
+</select>
+<!-- 分页查询新闻 -->
+<select id="browsePagingNews" resultType="News">  
+    SELECT
+	    news_id,
+    	type,
+    	title,
+    	time,
+    	fixed_recommend,
+    	is_recommend,
+    	img_address,
+    	<!--content,-->
+    	unit_price,
+    	total_price,
+    	reading_number,
+    	now_total_price,
+    	status,
+    	manager_id
+	FROM news_tb
+	<where>
+	<if test="type!=null">
+	AND type=#{type}
+	</if>
+	<if test="managerId!=null">
+	AND manager_id=#{managerId}
+	</if>
+	</where>
+	ORDER BY
+		${orderName}  ${orderWay}
+	LIMIT
+		#{pageNum},#{pageSize}
+</select>
+<!-- 查询所有新闻 -->
+<select id="browseNews" resultType="News">  
+    SELECT
+        news_id,
+    	type,
+    	title,
+    	time,
+    	fixed_recommend,
+    	is_recommend,
+    	img_address,
+    	<!--content,-->
+    	unit_price,
+    	total_price,
+    	reading_number,
+    	now_total_price,
+    	status,
+    	manager_id
+	FROM news_tb
+	<where>
+	<if test="type!=null">
+	AND type=#{type}
+	</if>
+	<if test="managerId!=null">
+	AND manager_id=#{managerId}
+	</if>
+	</where>
+	ORDER BY
+		${orderName} ${orderWay}
+</select>    
+<!-- 查询置顶新闻 -->
+<select id="browseFixedRecommendRandomNews" resultType="News">  
+ SELECT 
+ 		news_id,
+    	type,
+    	title,
+    	time,
+    	fixed_recommend,
+    	is_recommend,
+    	img_address,
+    	<!--content,-->
+    	unit_price,
+    	total_price,
+    	reading_number,
+    	now_total_price,
+    	status,
+    	manager_id
+FROM news_tb 
+	<where>
+fixed_recommend=${fixedRecommend}
+	<if test="managerId!=null">
+	AND manager_id=#{managerId}
+	</if>
+	</where>
+ORDER BY time desc LIMIT #{pageNum},#{pageSize};
+</select>    
+<!-- 查询推荐新闻 -->
+<select id="browseRecommendNews" resultType="News">  
+ SELECT 
+ 		news_id,
+    	type,
+    	title,
+    	time,
+    	fixed_recommend,
+    	is_recommend,
+    	img_address,
+    	<!--content,-->
+    	unit_price,
+    	total_price,
+    	reading_number,
+    	now_total_price,
+    	status,
+    	manager_id
+FROM news_tb 
+<where>
+ is_recommend=${isRecommend}
+	<if test="managerId!=null">
+	AND manager_id=#{managerId}
+	</if>
+	</where>
+ORDER BY time desc LIMIT #{pageNum},#{pageSize};
+</select>    
+<!-- 随机查询几条新闻 -->
+<select id="browseRandomRecommendNews" resultType="News">  
+ SELECT 
+ 		news_id,
+    	type,
+    	title,
+    	time,
+    	fixed_recommend,
+    	is_recommend,
+    	img_address,
+    	<!--content,-->
+    	unit_price,
+    	total_price,
+    	reading_number,
+    	now_total_price,
+    	status,
+    	manager_id
+FROM news_tb  AS t1 
+JOIN (SELECT ROUND(RAND() * ((SELECT MAX(news_id) FROM news_tb )-(SELECT MIN(news_id) FROM news_tb ))+(SELECT MIN(news_id) FROM news_tb)) AS id) AS t2 
+WHERE t1.news_id >= t2.id AND  is_recommend=${isRecommend}
+ORDER BY rand() LIMIT #{pageSize};
+</select>    
+<!-- 查询所有类型 去空 去重 -->
+<select id="browseTypeNews" resultType="String">  
+ SELECT distinct type from news_tb 
+ <where>
+ type!='' 
+ AND type is not null
+	<if test="managerId!=null">
+	AND manager_id=#{managerId}
+	</if>
+	</where>
+</select>    
+</mapper>

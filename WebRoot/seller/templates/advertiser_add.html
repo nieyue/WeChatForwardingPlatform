@@ -1,0 +1,29 @@
+    <label  class="text-danger" style="font-size:30px;color:#ccc;">添加广告主</label>
+<br/>
+<!-- 增加 -->
+	<form novalidate name="myAddAdvertiserForm" ng-submit="addAdvertiserForm()">
+    <label  class="text-danger">※名称</label>
+  <div class=" comment-input-margin">
+    <input type="text" class=" comment-input" ng-model="name" name="name" required ng-minlength="2" ng-maxlength="16" placeholder="2-16位">
+    <span class="text-danger alert alert-danger " ng-show="myAddAdvertiserForm.name.$dirty && myAddAdvertiserForm.name.$invalid">
+				    	<i class="glyphicon glyphicon-info-sign"></i>输入正确名称
+				    </span>
+  </div>
+    <label  class="text-danger">※手机号</label>
+  <div class=" comment-input-margin">
+    <input type="text" class=" comment-input" ng-model="manager_phone" name="manager_phone" required ng-pattern="/^(13[0-9]|15[012356789]|17[678]|18[0-9]|14[57])[0-9]{8}$/" placeholder="输入手机号">
+    <span class="text-danger alert alert-danger " ng-show="myAddAdvertiserForm.manager_phone.$dirty && myAddAdvertiserForm.manager_phone.$invalid">
+				    	<i class="glyphicon glyphicon-info-sign"></i>输入正确手机号码
+				    </span>
+  </div>
+    <label  class="text-danger">※密码</label>
+  <div class=" comment-input-margin">
+    <input type="text" class=" comment-input" ng-model="manager_password" name="manager_password" required ng-minlength="6" ng-maxlength="16" placeholder="输入密码">
+    <span class="text-danger alert alert-danger " ng-show="myAddAdvertiserForm.manager_password.$dirty && myAddAdvertiserForm.manager_password.$invalid">
+				    	<i class="glyphicon glyphicon-info-sign"></i>6-16位
+				    </span>
+  </div>
+  <input type="submit" class="btn btn-lg btn-danger" 
+  ng-disabled="( myAddAdvertiserForm.$invalid)||(myAddAdvertiserForm.manager_password.$dirty && myAddAdvertiserForm.manager_password.$invalid) ||(myAddAdvertiserForm.manager_phone.$dirty && myAddAdvertiserForm.manager_phone.$invalid)" value="提交"/>
+</form>
+<!-- 增加 end-->

@@ -1,0 +1,15 @@
+    <label  class="text-danger" style="font-size:30px;color:#ccc;">添加域名</label>
+<br/>
+<!-- 增加 -->
+	<form novalidate name="myAddDomainForm" ng-submit="addDomainForm()">
+    <label  class="text-danger">※名称</label>
+  <div class=" comment-input-margin">
+    <input type="text" class=" comment-input" ng-model="name" name="name" required ng-minlength="6" ng-maxlength="32" placeholder="6-32位">
+    <span class="text-danger alert alert-danger " ng-show="myAddDomainForm.name.$dirty && myAddDomainForm.name.$invalid">
+				    	<i class="glyphicon glyphicon-info-sign"></i>输入正确域名
+				    </span>
+  </div>
+  <input type="submit" class="btn btn-lg btn-danger" 
+  ng-disabled="( myAddDomainForm.$invalid) ||(myAddDomainForm.name.$dirty && myAddDomainForm.name.$invalid)" value="提交"/>
+</form>
+<!-- 增加 end-->

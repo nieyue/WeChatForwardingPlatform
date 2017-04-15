@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="com.nieyue.dao.DomainDao">
+<!-- 添加域名 -->
+<insert id="addDomain" parameterType="Domain" keyProperty="domainId" flushCache="true"  >  
+   INSERT IGNORE INTO
+   		  domain_tb 
+   		 (name,
+   		 status,
+   		 create_date,
+   		 stop_date
+   		 )
+   VALUES
+    	 (#{name},
+    	 #{status},
+    	 #{createDate},
+    	 #{stopDate})  
+</insert>  
+<!-- 更新域名 -->
+<update id="updateDomain" parameterType="Domain" >  
+    UPDATE 
+    	domain_tb 
+    SET 
+    	name=#{name},
+    	status=#{status},
+    	create_date=#{createDate},
+    	stop_date=#{stopDate}
+    WHERE
+    	 domain_id=#{domainId} 
+</update> 
+<!-- 删除域名-->
+<delete id="delDomain"  parameterType="Integer" >  
+    DELETE FROM
+    	 domain_tb 
+    	 WHERE domain_id=#{domainId}
+</delete>  
+<!-- 加载域名-->
+<select id="loadDomain" parameterType="Integer" resultType="Domain" >
+SELECT 
+		domain_id,
+	 	name,
+    	status,
+    	create_date,
+    	stop_date
+FROM domain_tb 
+WHERE domain_id=#{domainId}
+</select>
+
+<!-- 分页查询域名-->
+<select id="browsePagingDomain" resultType="Domain">  
+    SELECT
+	    domain_id,
+	 	name,
+    	status,
+    	create_date,
+    	stop_date
+	FROM domain_tb
+	<where>
+	<if test="status!=null">
+	AND status=#{status}
+	</if>
+	</where>
+	ORDER BY
+		${orderName}  ${orderWay}
+	LIMIT
+		#{pageNum},#{pageSize}
+</select> 
+
+<!-- 统计记录条数 -->
+<select id="countAll"  resultType="int">  
+	SELECT
+	 	count(domain_id)
+	FROM domain_tb
+	<where>
+	<if test="status!=null">
+	AND status=#{status}
+	</if>
+	</where>
+</select>   
+   
+ 
+</mapper>

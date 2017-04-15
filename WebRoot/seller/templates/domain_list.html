@@ -1,0 +1,55 @@
+<!-- 域名列表选择 -->
+<div style="margin:10px;">
+	 <label  class="text-danger" style="font-size:30px;color:#ccc;">域名列表</label>
+	
+</div>
+<!-- 域名列表选择end -->
+<!-- 域名列表 -->
+		<div style="width:100%" id="loadAnimationBody">
+			<table class="table table-bordered" style="width:100%">
+			<tr>
+			  <th>名称</th>
+			  <th>状态</th>
+			  <th>创建时间</th>
+			  <th>停用时间</th>
+			  <!-- <th >操作</th> -->
+			</tr>
+			<tr ng-repeat="domain in domainList" >
+			  <td >
+			  <span ng-bind="domain.name"></span>
+			  	 <form novalidate name="myUpdateDomainForm" ng-submit="updateDomain(domain,newname)">
+				  <input style="width:130px;" required ng-minlength="6" 
+				   ng-show="showName==domain.domain_id" ng-model="newname" name="newname" />
+				    <span class="text-danger alert alert-danger " ng-show="myUpdateDomainForm.newname.$dirty && myUpdateDomainForm.newname.$invalid">
+				    	<i class="glyphicon glyphicon-info-sign"></i>6-32位
+				    </span>
+				  <a class="btn btn-danger" ng-hide="showName==domain.domain_id" ng-click="toggleDomain(domain.domain_id,domain.name)" >修改</a> 
+				  <input type="submit" ng-disabled="myUpdateDomainForm.newname.$dirty && myUpdateDomainForm.newname.$invalid" class="btn btn-danger" ng-show="showName==domain.domain_id"  value="保存修改"/>
+			  	  </form>
+			  </td>
+			  <td ng-bind="domain.status"></td>
+			  <td ng-bind="domain.create_date"></td>
+			  <td ng-bind="domain.stop_date"></td>
+			 <!--  <td >
+			  <button class=" btn btn-warning" ng-click="managerNewList(manager.manager_id)">推广新闻管理</button>
+			  </td> -->
+			</tr>
+			</table>
+		</div>
+<!-- 域名列表end -->
+	<!-- 页面列表end -->
+<!-- 加载更多end -->
+   <div >
+    <ul class="pagination " >
+    <li><a ng-click="toPage('首页')" >首页</a></li>
+    <li class="previous" ><a ng-click="toPage('previous')" >&larr;</a></li>
+
+    <li ng-repeat="currentPageNumber in showPageNumberArray"><a ng-click="toPage(currentPageNumber)" ng-class="{active:currentPageNumber==currentPage}">{{currentPageNumber}}</a></li>
+
+    <li class="next"  ><a ng-click="toPage('next')" >&rarr;</a></li>
+    <li><a ng-click="toPage('尾页')" >尾页</a></li>
+    <li> <span>总页数：{{totalPage}}</span></li>
+    <li><span>总数：{{totalNumber}}</span></li>
+    </ul>
+   </div>
+<!--  加载更多end -->

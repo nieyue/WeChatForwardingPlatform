@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html ng-app="searchApp" ng-controller="searchCtrl" ng-class="fontSize">
+<head>
+<title>搜索</title>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport"
+	content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+<meta name="keywords" content="百闻一荐">
+<meta charset="UTF-8">
+<meta name="description"
+	content="百闻一荐">
+<link href="/resources/css/bootstrap.min.css" rel="stylesheet">
+<link href="/resources/css/base.css" rel="stylesheet">
+
+</head>
+
+<body  >
+	<div  class="comment-wrap"  >
+	<!-- 标志 -->
+		<div class="comment-top-fixed comment-title-top" style="background-color:#e20b0b;text-align:left">
+		<div style="display:inline-block;width:80%;font-size:1.2rem;position:absolute;left:0;top:0;margin:7px;">
+			<input ng-change="searchTextChange()" placeholder="请输入标题字段..." ng-model="searchText" style="color:#000;position:absolute;left:0;top:0;width:100%;height:36px;padding-right:36px;font-weight:lighter;"/>
+			<span ng-click="cleanSearchText()" ng-show="haveSearchText" style="position:absolute;right:0;top:0;color:#000;line-height: 36px;width: 36px;text-align: center;">×</span>
+		</div>
+			<span ng-show="!isSearch" style="position:absolute;left:85%;top:0; width:20%;line-height:50px;color:#fff;" onclick="javascript:location.replace('/dailyRecommended/index')">取消</span>
+			<span ng-show="isSearch" style="position:absolute;left:85%;top:0; width:20%;line-height:50px;color:#fff;" ng-click="search(searchText)" >搜索</span>
+		</div>
+	<!-- 标志end -->
+			<div class='loadAnimation'style="display:none;margin-top:50px !important;z-index:99999;" ><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+		
+		<!-- 新闻列表 -->
+		<div style="margin-top:50px !important;" >
+		<!-- 无结果 -->
+	<div class="row" ng-if="searchResult==-1">
+			<span class="col-xs-2" style="display:inline-block;">
+				<img  style="" src="/resources/img/nosearch.png">
+			</span>
+		<span class="col-xs-offset-1 col-xs-9" style="margin-top:20px;">
+			<span  style="display:inline-block;width:100%;font-size:1rem;color:#666;font-weight:bold;word-break:break-all;word-wrap: break-word;">
+			抱歉！ 没有找到匹配的"<span style="color:red;" ng-bind="searchText"></span>"相关信息</span>
+			<span  style="display:inline-block;font-size:0.5rem;color:#999;font-weight:bold;">请检查搜索栏中输入是否错误</span>
+		</span>
+		</div> 
+		<!-- 无结果end -->
+			<!-- 列表 -->
+		<div ng-if="searchResult==1">
+		<div class="listGroup list-group media comment-list-item" ng-repeat="newsdto in newsList" on-finish-render-filters ng-click="newsDetails(newsdto.news.type,newsdto.news.news_id)">
+			<!-- 一张图片列表 -->
+			<div ng-if="newsdto.img_list.length==1">
+			<div class="media-left" style="vertical-align:middle;width:32%;">
+				<a href="#" style="padding:5px 0 !important;position: relative;left: 0;top:0;display:inline-block;width:100%;">
+				 <img class="comment-list-item-img"
+					ng-src="{{newsdto.news.img_address||newsdto.img_list[0].img_address||newsInit.img_address}}" >
+					<div ng-if="newsdto.news.type=='视频'" class="video-radius"><div class="triangle-right"></div></div>
+				</a>
+			</div>
+			<div class="media-body comment-right-body">
+				<div class="pull-left">
+					<div class="comment-right-body-title">
+						<span style="font-size:0.8rem;overflow: hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;text-overflow:ellipsis;" ng-bind="newsdto.news.title||newsInit.title"></span>
+					</div>
+					<div class="text-muted" style="color:#bfbebe;font-size:14px;">
+					<span style="float: left;" class="newsType"  ng-bind="newsdto.news.type||newsInit.type"></span>
+					<span style="float: left;line-height:16px;margin:0 5px;">|</span>
+					<span   ng-bind="newsdto.news.time | dateDiff"></span>
+					</div>
+				</div>
+			</div>
+			</div>
+			<!-- 两张图片列表 -->
+			<div ng-if="newsdto.img_list.length==2">
+					<div class="comment-right-body-title">
+						<span style="font-size:0.8rem;overflow: hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;text-overflow:ellipsis;" ng-bind="newsdto.news.title||newsInit.title"></span>
+					</div>
+			<div class="text-center">
+				<a href="#" style="width:100%;">
+				<div ng-repeat="img in newsdto.img_list" class="comment-list-item-img-response2" style="position: relative;left: 0;top:0;display:inline-block;">
+				 <img style="width:100%;"
+					ng-src="{{img.img_address||newsdto.news.img_address||newsInit.img_address}}" >
+					<div ng-if="newsdto.news.type=='视频'" class="video-radius"><div class="triangle-right"></div></div>
+				</div>
+				</a>
+			</div>
+			<div class="media-body comment-right-body">
+				<div class="pull-left">
+					<div class="text-muted" style="color:#bfbebe;font-size:14px;">
+					<span style="float: left;" class="newsType"  ng-bind="newsdto.news.type||newsInit.type"></span>
+					<span style="float: left;line-height:16px;margin:0 5px;">|</span>
+					<span   ng-bind="newsdto.news.time | dateDiff"></span>
+					</div>
+				</div>
+			</div>
+			</div>
+			<!-- 三张图片列表 -->
+			<div ng-if="newsdto.img_list.length==3">
+					<div class="comment-right-body-title">
+						<span style="font-size:0.8rem;overflow: hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;text-overflow:ellipsis;" ng-bind="newsdto.news.title||newsInit.title"></span>
+					</div>
+			<div class="text-center" >
+				<a href="#" style="width:100%;">
+				<div ng-repeat="img in newsdto.img_list" class="comment-list-item-img-response3" style="position: relative;left: 0;top:0;display:inline-block;">
+				 <img style="width:100%" 
+					ng-src="{{img.img_address||newsdto.news.img_address||newsInit.img_address}}" >
+					<div ng-if="newsdto.news.type=='视频'" class="video-radius"><div class="triangle-right"></div></div>
+				</div>
+				</a>
+			</div>
+			<div class="media-body comment-right-body">
+				<div class="pull-left">
+					<div class="text-muted" style="color:#bfbebe;font-size:14px;">
+					<span style="float: left;" class="newsType"  ng-bind="newsdto.news.type||newsInit.type"></span>
+					<span style="float: left;line-height:16px;margin:0 5px;">|</span>
+					<span   ng-bind="newsdto.news.time | dateDiff"></span>
+					</div>
+				</div>
+			</div>
+			</div>
+		</div>
+		</div>
+		<!-- 列表end -->
+		
+
+		
+		
+		</div>
+		</div>
+		<!-- cnzz -->
+		<div style="display:none;">
+		<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1260079475'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s11.cnzz.com/z_stat.php%3Fid%3D1260079475' type='text/javascript'%3E%3C/script%3E"));</script>
+		</div>
+		
+	<script src="/resources/js/jquery2.1.js"></script>
+	<script src="/resources/js/bootstrap3.2.0.js"></script>
+	<script src="/resources/js/angularjs.min.1.5.7.js"></script>
+	<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+	<script src="/resources/js/base.js"></script>
+	<script src="/resources/js/weixinlogin.js"></script>
+
+	<script>
+
+	$(function(){
+		
+	});
+    	var searchApp=angular.module('searchApp',[]);
+    	searchApp.filter("dateDiff",function(){
+                return function(dateTimeStamp){
+                    return myUtils.getDateDiff(dateTimeStamp);
+                }
+            });
+    	searchApp.controller('searchCtrl',function($scope,$sce){
+    	//选择字体大小
+    		$scope.changeFontSize=function(number){
+    		sessionStorage.setItem("dailyRecommendedFontSizeNumber", number);
+    		if(number==1){
+    		$scope.fontSize="fontSizeBig";
+    		}else if(number==0){
+    		$scope.fontSize="fontSizeNormal";
+    		}if(number==-1){
+    		$scope.fontSize="fontSizeSmall";
+    		}
+    		};
+    	//字体大小
+    	if(sessionStorage.getItem("dailyRecommendedFontSizeNumber")){
+    		$scope.changeFontSize(sessionStorage.getItem("dailyRecommendedFontSizeNumber"));
+    		}
+    	
+    		$scope.haveSearchText=false;//是否有搜索文字，默认没有
+    		$scope.searchText="";//搜索文字，默认为空
+    		$scope.isSearch=false;//是否搜索，默认不搜索
+    		//搜索文字改变
+    		$scope.searchTextChange=function(){
+    		$scope.searchResult=0;//输入时初始化
+    		if($scope.searchText!=""){
+    			$scope.isSearch=true;
+    			$scope.haveSearchText=true;    		
+    		}else{
+    			$scope.isSearch=false;
+    		 $scope.haveSearchText=false;
+    		}
+    		};
+    		//清除文字
+    		$scope.cleanSearchText=function(){
+    		$scope.searchResult=0;//输入时初始化
+    		$scope.searchText="";
+    		$scope.isSearch=false;
+    		$scope.haveSearchText=false;
+    		};
+    	
+    		$scope.noMore=false;//false还有，true没有更多
+    		$scope.pageNum=1;//第多少个
+    		$scope.pageSize=10;//每页个数
+    		
+    		$scope.searchResult=0;//没有搜索结果
+    		
+    		function initData(a){
+    			$.ajax({  
+    		          type : "get",  
+    		          url : myUtils.getDomain()+"/news/dto/list/title?pageNum="+a.pageNum+"&pageSize="+a.pageSize+"&title="+a.title+"&orderName="+a.orderName+"&orderWay="+a.orderWay+"",  
+    		          async : false,  
+    		          success : function(data){
+    		         console.log(data)
+    		        	if(data.length<=0){
+    		        	$scope.searchResult=-1;
+    		        	return;
+    		        	}
+    		        	$scope.searchResult=1;
+    					localStorage.setItem("newsSearch", a.title);//把搜索的存入本地
+    		        	  if(a.pageNum>1){
+    		        		  for (var int = 0; int < data.length; int++) {
+    		        			$scope.newsList.push(data[int]); 
+							}
+    		        	  }else{
+    		        	  $scope.newsList=data; 
+    		        		  
+    		        	  } 
+    		        	  myUtils.myPrevToast("加载完成", null, "remove");
+    		          }  
+    		          });  
+    		}
+    		//搜索
+    		$scope.search=function(searchText){
+    		initData({
+    			pageNum:$scope.pageNum,
+    			pageSize:$scope.pageSize,
+    			title:searchText,
+    			orderName:"time",
+    			orderWay:"desc"
+    			});
+    		};
+    		
+    		//跳转页面
+    		$scope.newsDetails=function(type,news_id){
+    			location.replace("/dailyRecommended/news_details?type="+type+"&news_id="+news_id);
+    			console.log("/dailyRecommended/news_details?type="+type+"&news_id="+news_id)
+    		};
+    		//新闻初始化
+    		$scope.newsInit={
+    				news_id:6160,
+    				img_address:'http://t.kejixun.com/uploadfile/2016/0804/20160804024053197.jpg',
+        			title:'手机支付流行，小偷开始猖獗',
+        			type:'奇闻',
+        			time:'2016-08-04 14:40:53',
+        			content:">· 对商家而言，很难判别顾客究竟是遗漏扫码，还是不会扫码；</p>"
+        				+" <p>· 数据显示，采用自助扫码技术的商家，失窃率比同业平均水平高出122%；</p>"
+        				  +"<p>· 商家频繁地捉到小偷，并且小偷会承认犯罪。</p>"
+        				  +"<p>Hopkins表示：“许多商家开始认识到了这些问题，开始采取措施来提醒相关风险，并确保购物篮中所有商品都被扫码且打印在收据上。”</p>"
+        				  +" <p>“零售业的所有创新都是商业选择——处于购买体验更愉悦与商家利润更丰厚的考量。但同时也可能带来一些消极结果，例如失窃率增加。”</p>"
+        				  +"<p>该研究显示，商家的一些选择或许会招致一些出乎预料的行为和结果。</p> "
+        				 +"</div></div>"
+        			};
+    		//广告代码
+    		//$("body").append("<div><img style='width:100%;height:10%;position:fixed;left:0;bottom:0'  src='/resources/img/splash.jpg'></img></div>");
+    		/* $.get("/adsense/list/1",function(data){
+    			if(data&&data[0].content){    				
+        			console.log(data)
+        			myUtils.executeJS(data[0].content);
+        			}
+    		}); */
+    	});
+    	
+    	
+    </script>
+</body>
+</html>

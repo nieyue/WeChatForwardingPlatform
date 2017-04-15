@@ -1,0 +1,113 @@
+<!-- 左边导航 -->
+	 <div class="panel-group"  id="accordion" role="tablist" aria-multiselectable="true">
+  <div class="panel " >
+    <div class="panel-heading" >
+      <h4 class="panel-title">
+        <a role="button" class="nav-active" ui-sref="main.notice" href="#collapseOne">
+          	首页
+        </a>
+      </h4>
+    </div>
+  </div>
+ <!--  <div class="panel " >
+    <div class="panel-heading" role="tab" id="headingOne">
+      <h4 class="panel-title">
+        <a role="button" data-toggle="collapse" class="toCaret" data-parent="#accordion"  href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+         新闻抓取
+        </a>
+          <span class="caret pull-right" ></span>
+      </h4>
+    </div>
+    <div id="collapseOne" class="panel-collapse collapse " role="tabpanel" aria-labelledby="headingOne">
+      <div class="panel-body">
+      <div><a ui-sref="main.newsHot">热点新闻</a></div>
+      <div><a ui-sref="main.newsQQ">腾讯新闻</a></div>
+      <div><a ui-sref="main.newsDF">东方新闻</a></div>
+      </div>
+    </div>
+  </div> -->
+  <div class="panel " ng-if="sessionrole_id==1000">
+    <div class="panel-heading" role="tab" id="headingZero">
+      <h4 class="panel-title">
+        <a  role="button" data-toggle="collapse" class="toCaret" data-parent="#accordion" href="#collapseZero" aria-expanded="false" aria-controls="collapseZero">
+         域名管理
+        </a>
+          <span class="caret pull-right"></span>
+      </h4>
+    </div>
+    <div id="collapseZero" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingZero">
+      <div class="panel-body">
+		<div><a ui-sref="main.domainList">域名列表</a></div>
+		<div><a ui-sref="main.domainAdd">增加域名</a></div>
+      </div>
+    </div>
+  </div>
+  <div class="panel " ng-if="sessionrole_id==1000">
+    <div class="panel-heading" role="tab" id="headingTwo">
+      <h4 class="panel-title">
+        <a  role="button" data-toggle="collapse" class="toCaret" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+         所有新闻管理
+        </a>
+          <span class="caret pull-right"></span>
+      </h4>
+    </div>
+    <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+      <div class="panel-body">
+		<div><a ui-sref="main.newsList({manager_id:NaN})">新闻列表</a></div>
+		<div><a ui-sref="main.newsAdd({manager_id:NaN})">增加新闻</a></div>
+      </div>
+    </div>
+  </div>
+  <div class="panel " >
+    <div class="panel-heading" role="tab" id="headingTwo2">
+      <h4 class="panel-title">
+        <a  role="button" data-toggle="collapse" class="toCaret" data-parent="#accordion" href="#collapseTwo2" aria-expanded="false" aria-controls="collapseTwo2">
+         自身新闻管理
+        </a>
+          <span class="caret pull-right"></span>
+      </h4>
+    </div>
+    <div id="collapseTwo2" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo2">
+      <div class="panel-body">
+		<div><a ui-sref="main.newsList({manager_id:sessionmanager_id})">新闻列表</a></div>
+		<div><a ui-sref="main.newsAdd({manager_id:sessionmanager_id})">增加新闻</a></div>
+      </div>
+    </div>
+  </div>
+  <div class="panel " ng-if="sessionrole_id==1000" >
+    <div class="panel-heading" role="tab" id="headingThree">
+      <h4 class="panel-title">
+        <a  role="button" data-toggle="collapse" class="toCaret" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+         所有悬浮广告管理
+        </a>
+          <span class="caret pull-right"></span>
+      </h4>
+    </div>
+    <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+      <div class="panel-body">
+		<div><a ui-sref="main.adsense">广告位</a></div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="panel " ng-if="sessionrole_id==1000">
+    <div class="panel-heading" role="tab" id="headingFour">
+      <h4 class="panel-title">
+        <a  role="button" data-toggle="collapse" class="toCaret" data-parent="#accordion" href="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+         广告主管理
+        </a>
+          <span class="caret pull-right"></span>
+      </h4>
+    </div>
+    <div id="collapseFour" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingFour">
+      <div class="panel-body">
+		<div><a ui-sref="main.advertiserList">广告主列表</a></div>
+		<div><a ui-sref="main.advertiserAdd">增加广告主</a></div>
+		<!-- <div><a ui-sref="main.newsUpdate">修改新闻</a></div>
+		<div><a ui-sref="main.newsDelete">删除新闻</a></div> -->
+      </div>
+    </div>
+  </div>
+  
+  </div>
+	<!-- end左边导航 -->
