@@ -28,6 +28,10 @@ public class Manager implements Serializable {
 	 */
 	private String managerPhone;
 	/**
+	 * email
+	 */
+	private String email;
+	/**
 	 * 登录密码
 	 */
 	private String managerPassword;
@@ -91,12 +95,19 @@ public class Manager implements Serializable {
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
-	public Manager(Integer managerId, String name, String managerPhone, String managerPassword, Date createDate,
-			Date lastLoginDate, Integer roleId) {
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	public Manager(Integer managerId, String name, String managerPhone, String email, String managerPassword,
+			Date createDate, Date lastLoginDate, Integer roleId) {
 		super();
 		this.managerId = managerId;
 		this.name = name;
 		this.managerPhone = managerPhone;
+		this.email = email;
 		this.managerPassword = managerPassword;
 		this.createDate = createDate;
 		this.lastLoginDate = lastLoginDate;

@@ -17,6 +17,9 @@
    		 unit_price,
    		 total_price,
    		 reading_number,
+   		 pvs,
+   		 uvs,
+   		 ips,
    		 now_total_price,
    		 status,
    		 manager_id)
@@ -31,6 +34,9 @@
     	 #{unitPrice},
     	 #{totalPrice},
     	 #{readingNumber},
+    	 #{pvs},
+    	 #{uvs},
+    	 #{ips},
     	 #{nowTotalPrice},
     	 #{status},
     	 #{managerId})  
@@ -51,6 +57,9 @@
     	unit_price=#{unitPrice},
     	total_price=#{totalPrice},
     	reading_number=#{readingNumber},
+    	pvs=#{pvs},
+    	uvs=#{uvs},
+    	ips=#{ips},
     	now_total_price=#{nowTotalPrice},
     	status=#{status},
     	manager_id=#{managerId}
@@ -82,6 +91,9 @@ SELECT
     	unit_price,
     	total_price,
     	reading_number,
+    	 pvs,
+   		 uvs,
+   		 ips,
     	now_total_price,
     	status,
     	manager_id
@@ -102,6 +114,9 @@ WHERE news_id=#{newsId}
     	unit_price,
     	total_price,
     	reading_number,
+    	 pvs,
+   		 uvs,
+   		 ips,
     	now_total_price,
     	status,
     	manager_id
@@ -133,6 +148,9 @@ WHERE news_id=#{newsId}
     	unit_price,
     	total_price,
     	reading_number,
+    	 pvs,
+   		 uvs,
+   		 ips,
     	now_total_price,
     	status,
     	manager_id
@@ -164,6 +182,9 @@ WHERE news_id=#{newsId}
     	unit_price,
     	total_price,
     	reading_number,
+    	 pvs,
+   		 uvs,
+   		 ips,
     	now_total_price,
     	status,
     	manager_id
@@ -193,6 +214,9 @@ WHERE news_id=#{newsId}
     	unit_price,
     	total_price,
     	reading_number,
+    	 pvs,
+   		 uvs,
+   		 ips,
     	now_total_price,
     	status,
     	manager_id
@@ -219,6 +243,9 @@ ORDER BY time desc LIMIT #{pageNum},#{pageSize};
     	unit_price,
     	total_price,
     	reading_number,
+    	 pvs,
+   		 uvs,
+   		 ips,
     	now_total_price,
     	status,
     	manager_id
@@ -245,6 +272,9 @@ ORDER BY time desc LIMIT #{pageNum},#{pageSize};
     	unit_price,
     	total_price,
     	reading_number,
+    	 pvs,
+   		 uvs,
+   		 ips,
     	now_total_price,
     	status,
     	manager_id

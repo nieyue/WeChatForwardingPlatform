@@ -37,18 +37,19 @@ overflow:hidden;
 
 	<div  class="comment-wrap "  >
 	<!-- 标志 -->
-		<div class="comment-top-fixed comment-title-top" style="background-color:#e20b0b;text-align:left">
+		<!-- <div class="comment-top-fixed comment-title-top" style="background-color:#e20b0b;text-align:left">
 		<span class="aiduFont" style="vertical-align:middle;" ng-click="goBackIndex()">&lt;&lt;</span>
 		<span class="aiduFont" style="display:inline-block;font-size:22px;vertical-align:middle;" ng-click="goBackIndex()" ng-bind="wapName"></span>
 		<span class="aiduFont" style="display:inline-block;font-size:16px;vertical-align:middle;color:#fef504;" ng-bind="news.type"></span>
 		<span class="aiduFont btn  btn-sm" ng-class="fontSizeClassBig"style="display:inline-block;" ng-click="changeFontSize('1')">大</span>
 		<span class="aiduFont btn  btn-sm" ng-class="fontSizeClassNormal"  ng-click="changeFontSize('0')">中</span>
 		<span class="aiduFont btn  btn-sm" ng-class="fontSizeClassSmall" style="display:inline-block;" ng-click="changeFontSize('-1')">小</span>
-		</div>
+		</div> -->
 	<!-- 标志end -->
 			<div class='loadAnimation'style="margin-top:105px !important;z-index:99999;" ><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
 		<!-- 新闻列表 -->
-		<div  style="margin-top:50px !important;display:none;" id="newsDeatilsBody"   >
+<!-- 		<div  style="margin-top:50px !important;display:none;" id="newsDeatilsBody"   > -->
+		<div  style="margin-top:0px !important;display:none;" on-finish-render-filters id="newsDeatilsBody"   >
 		<div style="padding:2%;background-color:#fff;margin-bottom:5px;">
 			<div class="media-center">
 			<!-- 广告 -->
@@ -61,12 +62,12 @@ overflow:hidden;
 				<div class="text-muted" style="font-size:0.8rem;">
 					<span ng-bind="news.time"></span>
 					<span ng-bind="news.type"></span>
-					<span class="pull-right" >
-					阅读数：<span ng-bind="news.reading_number || '0'"></span>
-					</span>
 				</div>
 				 <div style="font-size:1em !important;" ng-bind-html="news.content" id="newsDetails">
 				</div> 
+				 <div style="color:#ccc;">
+					阅读：<span ng-bind="news.reading_number || '0'"></span>
+				</div>
 				 		
 			</div>
 		</div>
@@ -81,17 +82,17 @@ overflow:hidden;
 				</a> -->
 			<!-- 广告  end-->
 		<!-- 新闻列表end -->
-<div class="list-group media " style="padding:2%;background-color:#fff;margin-top:5px;">
+<!-- <div class="list-group media " style="padding:2%;background-color:#fff;margin-top:5px;">
 			<div class="media-center">
 				<div class="comment-hot-title">
 					<span class="comment-hot-icon" style="border-left-color:#2b1152;"></span>
 					<span class="comment-hot-word">更多精彩</span>
-					<!-- <span class="comment-hot-line"></span> -->
+					<span class="comment-hot-line"></span>
 				</div>
-		<!-- 置顶-->
+		置顶
 			
 		
-		<!-- 根据时间加载 -->
+		根据时间加载
 		<div class="listGroup list-group media comment-list-item" style="border-top:1px solid #f8f8f8" ng-repeat="newsdto in newsList"  on-finish-render-filters  ng-click="newsDetails(newsdto.news.type,newsdto.news.news_id)">
 			<div ng-if="newsdto.img_list.length==1">
 			<div class="media-left" style="vertical-align:middle;width:32%;">
@@ -160,29 +161,29 @@ overflow:hidden;
 				</div>
 			</div>
 			</div>
-	<!-- 百度广告 -->
-			<!-- <div ng-if="$index==3 || $index==9" class="baidu-advertise">
+	百度广告
+			<div ng-if="$index==3 || $index==9" class="baidu-advertise">
 				<script type="text/javascript">
 		    var cpro_id = "u2951435";
 		</script>
 		<script type="text/javascript" src="http://cpro.baidustatic.com/cpro/ui/cm.js"></script>
-			</div> -->
-		<!-- 百度广告 end -->
+			</div>
+		百度广告 end
 		</div>
-		<!-- 根据时间加载 end-->
+		根据时间加载 end
 		
 		
 		</div>
-		</div>
+		</div> -->
 		<!-- 底部end -->
-		<div class="comment-bottom" ng-if="noMore">Copyright 2015 itcast Inc,All rights reserved.</div>
-		<!--  底部end -->
+		<!-- <div class="comment-bottom" ng-if="noMore">Copyright 2015 itcast Inc,All rights reserved.</div>
+ -->		<!--  底部end -->
 		</div>
 		</div>
 		<!-- cnzz -->
 		<div style="display:none;">
-		<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1260079475'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s11.cnzz.com/z_stat.php%3Fid%3D1260079475' type='text/javascript'%3E%3C/script%3E"));</script>
-		</div>
+		<!-- <script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1260079475'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s11.cnzz.com/z_stat.php%3Fid%3D1260079475' type='text/javascript'%3E%3C/script%3E"));</script>
+ -->		</div>
 		
 	<script src="/resources/js/jquery2.1.js"></script>
 	<script src="/resources/js/bootstrap3.2.0.js"></script>
@@ -243,10 +244,10 @@ overflow:hidden;
 		});
 	  	//新增下一页
 	  	
-	  	var prePageNum=0;//初始上一页
-		var nextPageNum=10;//初始下一页
-		var pageSize=10;//初始页面长度
-		var showQuanWen=true;//使用展开全文模式
+	  	/* var prePageNum=0;//初始上一页
+		var nextPageNum=10000000;//初始下一页
+		var pageSize=10000000;//初始页面长度
+		var showQuanWen=false;//使用展开全文模式
 	  	var list="p";
 		if(($("p").length<=0) && ($("li").length>0)){
 			list="li";
@@ -330,7 +331,7 @@ overflow:hidden;
 	  		showPage(prePageNum,nextPageNum);
 	  		
 		});
-		
+		 */
 		
 	});
     	var detailsApp=angular.module('detailsApp',[]);
@@ -339,18 +340,22 @@ overflow:hidden;
                     return myUtils.getDateDiff(dateTimeStamp);
                 }
             });
-            detailsApp.directive('onFinishRenderFilters', function() {
+           detailsApp.directive('onFinishRenderFilters', function() {
 					return {
 					restrict: 'A',
 					link: function(scope, element, attr) {
-					if (scope.$last === true) {
+					console.log(scope)
+					console.log(element)
+					console.log(attr)
+					//if (scope.$last === true) {
+					if (scope.news) {
 					$("#newsDeatilsBody").show();
 					$(".loadAnimation").hide();
 					scope.$emit('ngRepeatFinished');
 					}
 					}
 					};
-					});
+					}); 
     	detailsApp.controller('detailsCtrl',function($scope,$sce){
     	$scope.wapName="每日生活";
     		//自定义字体大小 大 中 小
@@ -382,12 +387,22 @@ overflow:hidden;
     		}
     	
     		function initData(id,fixedRecommendSize,isRecommendSize){
+    		 var uv=0;//默认为0不是独立访客，没有uv,1为有uv
+            	 //只有不存在，才是新访客
+            	if(!myUtils.getCookie("newsUv"+myUtils.GetQueryString("news_id"))){
+            		myUtils.setCookie("newsUv"+myUtils.GetQueryString("news_id"), myUtils.GetQueryString("news_id"), myUtils.currentToEndTime());
+            		uv=1;
+            	} 
     			$.ajax({  
   		          type : "get",  
-  		          url : myUtils.getDomain()+"/news/"+id,  
+  		          url : myUtils.getDomain()+"/news/click?newsId="+id+"&uv="+uv,  
   		          async : false,  
   		          success : function(data){
   		        	console.log(data);
+  		        	if(data.code==40000){
+  		        	myUtils.myTemplate("页面已删除")
+  		        	return;
+  		        	}
   		        	var el = $( "<div id='datacontentid'></div>");
   		        	$(el).html(data.content);
     				//console.log($(el).text().substring(0, 30)+"...");
@@ -409,7 +424,7 @@ overflow:hidden;
     		initData(myUtils.GetQueryString("news_id"),1,1);
     			
     			//列表
-      			function initListData(a){
+      			/* function initListData(a){
     			$.ajax({  
     		          type : "get",  
     		          url : myUtils.getDomain()+"/news/dto/list?pageNum="+a.pageNum+"&pageSize="+a.pageSize+"&type="+a.type+"&orderName="+a.orderName+"&orderWay="+a.orderWay+"",  
@@ -489,9 +504,9 @@ overflow:hidden;
         			onReachBottom();
         		}
         			
-        		});
+        		}); */
     		//返回首页
-    		$scope.indexType=["视频","历史","奇闻","图片","段子","八卦"];
+    		/* $scope.indexType=["视频","历史","奇闻","图片","段子","八卦"];
     		$scope.goBackIndex=function(){
     		var type="推荐";
     		for(var i=0;i<$scope.indexType.length;i++){
@@ -505,7 +520,7 @@ overflow:hidden;
     		//跳转页面
     		$scope.newsDetails=function(type,news_id){
     			location.replace("/dailyRecommended/news_details?type="+type+"&news_id="+news_id);
-    		};
+    		}; */
     		//新闻初始化
     		$scope.newsInit={
     				news_id:6160,

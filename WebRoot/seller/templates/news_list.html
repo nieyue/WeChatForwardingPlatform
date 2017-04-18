@@ -3,7 +3,7 @@
 	<button class="btn btn-primary" ng-click="allNews()">全部新闻列表</button>
 	<button class="btn btn-danger" ng-click="fixedRecommendNews()">热门置顶新闻列表</button>
 	<button class="btn btn-info" ng-click="isRecommendNews()">推荐新闻列表</button>
-	<button class="btn btn-success" ng-click="changeEmail()">配置email</button>
+	<button class="btn btn-success" ng-if="sessionrole_id==1000" ng-click="changeEmail()">配置email</button>
 </div>
 <div style="margin:10px;">
 <p>动态分类列表</p>
@@ -27,27 +27,44 @@
 			<div class="media-body comment-right-body">
 				<div class="pull-left">
 					<div>
-					<span class="comment-right-body-title">单价：<span style="color:red;" ng-bind="newsdto.news.unit_price  ||'0.00' | number:2"></span></span>
-					<span class="comment-right-body-title">总额：<span style="color:red;" ng-bind="newsdto.news.total_price  ||'0.00' | number:2"></span></span>
+					<span class="comment-right-body-title">单价：<span style="color:red;" ng-bind="newsdto.news.unit_price  ||'0.00' | number:2"></span>元</span>
+					<span class="comment-right-body-title">总额：<span style="color:red;" ng-bind="newsdto.news.total_price  ||'0.00' | number:2"></span>元</span>
 					</div>
 					<div>
 					<span class="comment-right-body-title">阅读数：<span style="color:red;" ng-bind="newsdto.news.reading_number||'0'"></span></span>
-					<span class="comment-right-body-title">消耗额：<span style="color:red;" ng-bind="newsdto.news.now_total_price ||'0.00' | number:2"></span></span>
+					<span class="comment-right-body-title">消耗额：<span style="color:red;" ng-bind="newsdto.news.now_total_price ||'0.00' | number:2"></span>元</span>
+					</div>
+					<div>
+					<span class="comment-right-body-title">PV：<span style="color:red;" ng-bind="newsdto.news.pvs||'0'"></span></span>
+					</div>
+					<div>
+					<span class="comment-right-body-title">UV：<span style="color:red;" ng-bind="newsdto.news.uvs ||'0'"></span></span>
+					</div>
+					<div>
+					<span class="comment-right-body-title">IP：<span style="color:red;" ng-bind="newsdto.news.ips ||'0'"></span></span>
 					</div>
 				</div>
 				<div class="pull-right">
 					<div class="comment-right-body-title"><span ng-bind="newsdto.news.title||newsInit.title"></span></div>
 					<div class="text-muted"><span ng-bind="newsdto.news.time||newsInit.time"></span><span class="newsType" ng-bind="newsdto.news.type||newsInit.type"></span></div>
-					<button class=" btn btn-warning" ng-click="emailNew(newsdto.news)"><span class="glyphicon glyphicon-envelope"></span>发邮件</button>
+					<button class=" btn btn-warning" ng-if="sessionrole_id==1000" ng-click="emailNew(newsdto.news)"><span class="glyphicon glyphicon-envelope"></span>发邮件</button>
 					<button class=" btn btn-warning" ng-click="updateNew(newsdto,newsdto.news,newsdto.img_list)"><span class="glyphicon glyphicon-pencil"></span>编辑</button>
-					<button class=" btn btn-danger" ng-click="deleteNew(newsdto.news)"><span class="glyphicon glyphicon-trash"></span>删除</button>
+					<button class=" btn btn-danger" ng-if="sessionrole_id==1000" ng-click="deleteNew(newsdto)"><span class="glyphicon glyphicon-trash"></span>删除</button>
 				</div>
 			</div>
-				<div>
-					<span class="comment-right-body-title">
-					链接：<a style="color:green;" href="{{safeDomain}}/dailyRecommended/news_details?type={{newsdto.news.type}}&news_id={{newsdto.news.news_id}}">
-					{{safeDomain}}/dailyRecommended/news_details?type={{newsdto.news.type}}&news_id={{newsdto.news.news_id}}
-					</a></span>
+					<div>
+						<span class="comment-right-body-title">
+						推广链接：<a style="color:green;" href="{{safeDomain}}/dailyRecommended/news_details?type={{newsdto.news.type}}&news_id={{newsdto.news.news_id}}">
+						{{safeDomain}}/dailyRecommended/news_details?type={{newsdto.news.type}}&news_id={{newsdto.news.news_id}}
+						</a>
+						</span>
+					</div>
+					<div>
+						<span class="comment-right-body-title">
+						广告主数据链接：<a style="color:green;" href="{{safeDomain}}/dailyRecommended/advertiser?news_id={{newsdto.news.news_id}}">
+						{{safeDomain}}/dailyRecommended/advertiser?news_id={{newsdto.news.news_id}}
+						</a>
+						</span>
 					</div>
  		 </div>
  		 

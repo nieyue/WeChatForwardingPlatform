@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="com.nieyue.dao.DataDao">
+<!-- 添加数据 -->
+<insert id="addData" parameterType="Data" keyProperty="dataId" flushCache="true"  >  
+   INSERT IGNORE INTO
+   		  data_tb 
+   		 (
+   		 pvs,
+   		 uvs,
+   		 ips,
+   		 create_date,
+   		 news_id
+   		 )
+   VALUES
+    	 (#{pvs},
+    	 #{uvs},
+    	 #{ips},
+    	 #{createDate},
+    	 #{newsId}
+    	 )  
+</insert>  
+<!-- 更新数据 -->
+<update id="updateData" parameterType="Data" >  
+    UPDATE 
+    	data_tb 
+    SET 
+    	pvs=#{pvs},
+    	uvs=#{uvs},
+    	ips=#{ips},
+    	create_date=#{createDate},
+    	news_id=#{newsId}
+    WHERE
+    	 data_id=#{dataId} 
+</update> 
+<!-- 删除数据-->
+<delete id="delData"  parameterType="Integer" >  
+    DELETE FROM
+    	 data_tb 
+    	 WHERE data_id=#{DataId}
+</delete>  
+<!-- 加载数据-->
+<select id="loadData" parameterType="Integer" resultType="Data" >
+SELECT 
+		 data_id,
+	 	 pvs,
+   		 uvs,
+   		 ips,
+   		 create_date,
+   		 news_id
+FROM data_tb 
+WHERE data_id=#{dataId}
+</select>
+
+<!-- 分页查询数据-->
+<select id="browsePagingData" resultType="Data">  
+    SELECT
+	     data_id,
+	 	 pvs,
+   		 uvs,
+   		 ips,
+   		 create_date,
+   		 news_id
+	FROM data_tb
+	ORDER BY
+		${orderName}  ${orderWay}
+	LIMIT
+		#{pageNum},#{pageSize}
+</select> 
+
+<!-- 统计记录条数 -->
+<select id="countAll"  resultType="int">  
+	SELECT
+	 	count(data_id)
+	FROM data_tb
+</select>   
+   
+ 
+</mapper>

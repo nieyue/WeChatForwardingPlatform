@@ -12,6 +12,7 @@ import com.nieyue.bean.News;
 import com.nieyue.dao.ImgDao;
 import com.nieyue.dao.NewsDao;
 import com.nieyue.dto.NewsDTO;
+import com.nieyue.service.DataService;
 import com.nieyue.service.NewsService;
 
 /**
@@ -25,6 +26,8 @@ public class NewsServiceImpl implements NewsService {
 	NewsDao newsDao;
 	@Resource
 	ImgDao imgDao;
+	@Resource
+	DataService dataService;
 	/**
 	 * 增加新闻
 	 * @param 
@@ -33,8 +36,17 @@ public class NewsServiceImpl implements NewsService {
 	public boolean addNews(News news) {
 		news.setReadingNumber(0);
 		news.setStatus("正常");
+		news.setPvs(0l);
+		news.setUvs(0l);
+		news.setIps(0l);
 		news.setNowTotalPrice(0.0);
 		boolean b = newsDao.addNews(news);
+		/*Data data = new Data();
+		data.setIps(0l);
+		data.setUvs(0l);
+		data.setPvs(0l);
+		data.setNewsId(news.getNewsId());
+		b=dataService.addData(data);*/
 		return b;
 	}
 	/**
@@ -156,6 +168,12 @@ public class NewsServiceImpl implements NewsService {
 	public boolean addNewsDTO(NewsDTO newsDTO) {
 		boolean b=false;
 		News news = newsDTO.getNews();
+		news.setReadingNumber(0);
+		news.setStatus("正常");
+		news.setPvs(0l);
+		news.setUvs(0l);
+		news.setIps(0l);
+		news.setNowTotalPrice(0.0);
 		b = newsDao.addNews(news);
 		List<Img> il = newsDTO.getImgList();
 		for (int i = 0; i < il.size(); i++) {

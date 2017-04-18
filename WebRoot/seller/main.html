@@ -54,6 +54,56 @@
        <script type="text/javascript">
        
        angular.module('mainApp', ['ngAnimate','ui.router'])
+              .controller('mainCtrl', function($rootScope,$scope,$http) {
+       $scope.backstageName="微信推广系统";//系统名称
+    	 //设置高度
+    	 setInterval(function(){
+			$(".seller-main-body").height($(".seller-main-body-right").height()+50);
+    		 
+    	 }, 300);
+    	 //验证是否已经登录
+    		$.get("/manager/isLogin",function(data){
+       			console.log(data)
+       			$scope.manager_phone=data.manager_phone;
+       			$rootScope.sessionmanager_id=data.manager_id;
+       			$rootScope.sessionrole_id=data.role_id;
+       			$scope.$apply();
+       		if(data==null||data==''){
+       			location.replace("/seller/index");
+       		}
+       	});
+   		//登录退出
+   		$scope.sellerLoginOut=function(){
+   			myUtils.myLoginOut("确定退出吗？", function(){
+   				$.get("/manager/loginOut",function(data){
+   	   				if(data.code==200){
+   	   					myUtils.myLoadingToast("退出成功", null);   	   				
+   						location.replace("/seller/index");
+   	   				}else{
+   	   					myUtils.myLoadingToast("退出失败", null);   	   				
+   	   				}
+   	   			});
+   			});
+   		};
+   		
+   		
+		//新闻初始化
+		$scope.newsInit={
+				news_id:6160,
+				img_address:'http://t.kejixun.com/uploadfile/2016/0804/20160804024053197.jpg',
+    			title:'手机支付流行，小偷开始猖獗',
+    			type:'奇闻',
+    			time:'2016-08-04 14:40:53',
+    			content:">· 对商家而言，很难判别顾客究竟是遗漏扫码，还是不会扫码；</p>"
+    				+" <p>· 数据显示，采用自助扫码技术的商家，失窃率比同业平均水平高出122%；</p>"
+    				  +"<p>· 商家频繁地捉到小偷，并且小偷会承认犯罪。</p>"
+    				  +"<p>Hopkins表示：“许多商家开始认识到了这些问题，开始采取措施来提醒相关风险，并确保购物篮中所有商品都被扫码且打印在收据上。”</p>"
+    				  +" <p>“零售业的所有创新都是商业选择——处于购买体验更愉悦与商家利润更丰厚的考量。但同时也可能带来一些消极结果，例如失窃率增加。”</p>"
+    				  +"<p>该研究显示，商家的一些选择或许会招致一些出乎预料的行为和结果。</p> "
+    				 +"</div></div>"
+    			};
+		
+   		})
        .config(function ($stateProvider, $urlRouterProvider) {
      	$urlRouterProvider.when("", "main");
      	$stateProvider
@@ -199,7 +249,7 @@
                 	}
                 	});
                 	};
-                	$scope.getDomain();
+                     $scope.getDomain();
                 	
                 	$scope.isEmail=false;//默认不显示邮件配置
                 	$scope.type="首页";//默认类型为首页，即都可以显示
@@ -506,6 +556,15 @@
                         		var radioIsRecommend=$("input[name='radioIsRecommend']:checked").val();
                         		var img_address=news.img_address;
                         		var content=ue.getContent();
+                        		var unit_price=news.unit_price;
+              		        	var total_price=news.total_price;
+              		        	var reading_number=news.reading_number;
+              		        	var now_total_price=news.now_total_price;
+              		        	var status=news.status;
+              		        	var pvs=news.pvs;
+              		        	var uvs=news.uvs;
+              		        	var ips=news.ips;
+              		        	var manager_id=news.manager_id;
                  					
                         		console.log(radioFixedRecommend)
                         		myUtils.myPrevToast("修改中", function(){
@@ -521,6 +580,15 @@
               		        	      fixed_recommend:radioFixedRecommend,
               		        	  	  is_recommend:radioIsRecommend,
               		        	  	  time:news.time,
+              		        	  	  unit_price:unit_price,
+              		        	  	  total_price:total_price,
+              		        	  	  reading_number:reading_number,
+              		        	  	  pvs:pvs,
+              		        	  	  uvs:uvs,
+              		        	  	  ips:ips,
+              		        	  	  now_total_price:now_total_price,
+              		        	  	  status:status,
+              		        	  	  manager_id:manager_id,
               		        	      content:content},
               		          img_list:angular.fromJson(angular.toJson(img_list))
               		        	  }),  
@@ -554,15 +622,13 @@
                 			});
                 		};
                 		//删除new
-                		$scope.deleteNew=function(news){
+                		$scope.deleteNew=function(newsdto){
                 			myUtils.myLoginOut("确定删除吗？", function(){
-                   				$.get("/news/"+news.news_id+"/delete",function(data){
+                   				$.get("/news/"+newsdto.news.news_id+"/delete",function(data){
                    					console.log($scope.newsList)
                    	   				if(data.code==200){
-                   	   				$scope.newsList.splice($scope.newsList.indexOf(news), 1);
-                   	   				//$scope.newsList.splice(news.news_id,1);
+                   	   				$scope.newsList.splice($scope.newsList.indexOf(newsdto), 1);
                    	   				$scope.$apply();
-                   	   				initTypeData();//初始化类型列表
                    	   				myUtils.myLoadingToast("删除成功", null); 
                    	   				
                    	   				}else{
@@ -849,6 +915,7 @@
             	'rightbody@main': {
                     templateUrl: "/seller/templates/advertiser_add.html",
                      controller:function($rootScope,$scope){
+                     $scope.manager_phone="";
                      //如果不是超级管理员不能管理其他人的文章
                    	if($rootScope.sessionrole_id!=1000 ){
                    	location.href="/seller/main";
@@ -856,9 +923,10 @@
                    	}
                      //增加广告主
                      $scope.addAdvertiserForm=function(){
-                     $.get("/manager/add?name="+$scope.name+"&managerPhone="+$scope.manager_phone+"&managerPassword="+$scope.manager_password,function(d){
+                     $.get("/manager/add?name="+$scope.name+"&managerPhone="+$scope.manager_phone+"&email="+$scope.email+"&managerPassword="+$scope.manager_password,function(d){
 						$scope.name="";
 						$scope.manager_phone="";
+						$scope.email="";
 						$scope.manager_password="";
 						$scope.$apply();
     			  myUtils.myLoadingToast(d.msg, null);
@@ -933,56 +1001,7 @@
             }
         });
        
-		})
-       .controller('mainCtrl', function($rootScope,$scope,$http) {
-       $scope.backstageName="微信推广系统";//系统名称
-    	 //设置高度
-    	 setInterval(function(){
-			$(".seller-main-body").height($(".seller-main-body-right").height()+50);
-    		 
-    	 }, 300);
-    	 //验证是否已经登录
-    		$.get("/manager/isLogin",function(data){
-       			console.log(data)
-       			$scope.manager_phone=data.manager_phone;
-       			$rootScope.sessionmanager_id=data.manager_id;
-       			$rootScope.sessionrole_id=data.role_id;
-       		if(data==null||data==''){
-       			location.replace("/seller/index");
-       		}
-       	});
-   		//登录退出
-   		$scope.sellerLoginOut=function(){
-   			myUtils.myLoginOut("确定退出吗？", function(){
-   				$.get("/manager/loginOut",function(data){
-   	   				if(data.code==200){
-   	   					myUtils.myLoadingToast("退出成功", null);   	   				
-   						location.replace("/seller/index");
-   	   				}else{
-   	   					myUtils.myLoadingToast("退出失败", null);   	   				
-   	   				}
-   	   			});
-   			});
-   		};
-   		
-   		
-		//新闻初始化
-		$scope.newsInit={
-				news_id:6160,
-				img_address:'http://t.kejixun.com/uploadfile/2016/0804/20160804024053197.jpg',
-    			title:'手机支付流行，小偷开始猖獗',
-    			type:'奇闻',
-    			time:'2016-08-04 14:40:53',
-    			content:">· 对商家而言，很难判别顾客究竟是遗漏扫码，还是不会扫码；</p>"
-    				+" <p>· 数据显示，采用自助扫码技术的商家，失窃率比同业平均水平高出122%；</p>"
-    				  +"<p>· 商家频繁地捉到小偷，并且小偷会承认犯罪。</p>"
-    				  +"<p>Hopkins表示：“许多商家开始认识到了这些问题，开始采取措施来提醒相关风险，并确保购物篮中所有商品都被扫码且打印在收据上。”</p>"
-    				  +" <p>“零售业的所有创新都是商业选择——处于购买体验更愉悦与商家利润更丰厚的考量。但同时也可能带来一些消极结果，例如失窃率增加。”</p>"
-    				  +"<p>该研究显示，商家的一些选择或许会招致一些出乎预料的行为和结果。</p> "
-    				 +"</div></div>"
-    			};
-		
-   		});			
+		});		
      
 		</script>
         </body>

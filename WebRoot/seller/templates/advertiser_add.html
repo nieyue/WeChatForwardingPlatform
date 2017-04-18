@@ -16,6 +16,13 @@
 				    	<i class="glyphicon glyphicon-info-sign"></i>输入正确手机号码
 				    </span>
   </div>
+    <label  class="text-danger">※email</label>
+  <div class=" comment-input-margin">
+    <input type="text" class=" comment-input" ng-model="email" name="email" required ng-pattern="/^([a-zA-Z0-9]+[_|\-|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\-|\.]?)*[a-zA-Z0-9]+(\.[a-zA-Z]{2,3})+$/" placeholder="输入email">
+    <span class="text-danger alert alert-danger " ng-show="myAddAdvertiserForm.email.$dirty && myAddAdvertiserForm.email.$invalid">
+				    	<i class="glyphicon glyphicon-info-sign"></i>输入正确email
+				    </span>
+  </div>
     <label  class="text-danger">※密码</label>
   <div class=" comment-input-margin">
     <input type="text" class=" comment-input" ng-model="manager_password" name="manager_password" required ng-minlength="6" ng-maxlength="16" placeholder="输入密码">

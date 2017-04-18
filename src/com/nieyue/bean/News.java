@@ -22,6 +22,9 @@ public class News implements Serializable {
 	private Double totalPrice;
 	private Integer readingNumber;
 	private Double nowTotalPrice;
+	private Long pvs;
+	private Long uvs;
+	private Long ips;
 	private String status;
 	private Integer managerId;
 	public Integer getNewsId() {
@@ -111,9 +114,30 @@ public class News implements Serializable {
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
+	public News() {
+		super();
+	}
+	public Long getPvs() {
+		return pvs;
+	}
+	public void setPvs(Long pvs) {
+		this.pvs = pvs;
+	}
+	public Long getUvs() {
+		return uvs;
+	}
+	public void setUvs(Long uvs) {
+		this.uvs = uvs;
+	}
+	public Long getIps() {
+		return ips;
+	}
+	public void setIps(Long ips) {
+		this.ips = ips;
+	}
 	public News(Integer newsId, String type, String title, Integer isRecommend, Integer fixedRecommend, Date time,
 			String imgAddress, String content, Double unitPrice, Double totalPrice, Integer readingNumber,
-			Double nowTotalPrice, String status, Integer managerId) {
+			Double nowTotalPrice, Long pvs, Long uvs, Long ips, String status, Integer managerId) {
 		super();
 		this.newsId = newsId;
 		this.type = type;
@@ -127,11 +151,11 @@ public class News implements Serializable {
 		this.totalPrice = totalPrice;
 		this.readingNumber = readingNumber;
 		this.nowTotalPrice = nowTotalPrice;
+		this.pvs = pvs;
+		this.uvs = uvs;
+		this.ips = ips;
 		this.status = status;
 		this.managerId = managerId;
-	}
-	public News() {
-		super();
 	}
 	
 }

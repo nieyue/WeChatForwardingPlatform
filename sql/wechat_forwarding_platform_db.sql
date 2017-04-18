@@ -20,6 +20,7 @@ CREATE TABLE manager_tb(
 manager_id int(11) NOT NULL AUTO_INCREMENT COMMENT '管理员id',
 name varchar(255) COMMENT '名称',
 manager_phone varchar(255) COMMENT '电话',
+email varchar(255) COMMENT 'email',
 manager_password varchar(255) COMMENT '密码',
 create_date datetime COMMENT '创建时间',
 last_login_date datetime COMMENT '最后登陆时间',
@@ -39,7 +40,10 @@ img_address varchar(255) COMMENT '图片地址',
 content longtext COMMENT '文章内容',
 unit_price decimal(11,2) COMMENT '广告主单价',
 total_price decimal(11,2) COMMENT '广告主总价',
-reading_number int(11) COMMENT '阅读数',
+reading_number int(11) DEFAULT 0 COMMENT '阅读数',
+pvs bigint(20) DEFAULT 0 COMMENT 'pvs',
+uvs bigint(20) DEFAULT 0 COMMENT 'uvs',
+ips bigint(20) DEFAULT 0 COMMENT 'ips',
 now_total_price decimal(11,2) COMMENT '消耗金额',
 status varchar(255) COMMENT '状态',
 manager_id int(11) COMMENT '管理员id外键',
@@ -55,6 +59,18 @@ news_id int(11) COMMENT '新闻id,外键',
 PRIMARY KEY (img_id),
 CONSTRAINT FK_NEWS_IMG FOREIGN KEY (news_id) REFERENCES news_tb (news_id) ON DELETE CASCADE ON UPDATE CASCADE
 )ENGINE = InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8 COMMENT='商品图片表';
+
+#创建数据表 
+CREATE TABLE data_tb(
+data_id int(11) NOT NULL AUTO_INCREMENT COMMENT '数据id',
+pvs bigint(20) COMMENT 'pvs',
+uvs bigint(20) COMMENT 'uvs',
+ips bigint(20) COMMENT 'ips',
+create_date datetime COMMENT '创建时间',
+news_id int(11) COMMENT '新闻id,外键',
+PRIMARY KEY (data_id),
+CONSTRAINT FK_NEWS_DATA FOREIGN KEY (news_id) REFERENCES news_tb (news_id) ON DELETE CASCADE ON UPDATE CASCADE
+)ENGINE = InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8 COMMENT='数据表';
 
 #创建广告位表
 CREATE TABLE adsense_tb(

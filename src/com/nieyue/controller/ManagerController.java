@@ -62,6 +62,13 @@ public class ManagerController {
 				return StateResult.getSlefSR(40002, "手机号已经存在");
 			}
 		}
+		List<String> le = managerService.browseAllManagerEmail();
+		for (int i = 0; i < le.size(); i++) {
+			String se = le.get(i);
+			if(se!=null&&se.equals(manager.getEmail())){
+				return StateResult.getSlefSR(40002, "email已经存在");
+			}
+		}
 		manager.setRoleId(1001);
 		manager.setManagerPassword(MyDESutil.getMD5(manager.getManagerPassword()));
 		boolean b = managerService.addManager(manager);

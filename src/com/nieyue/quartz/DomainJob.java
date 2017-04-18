@@ -5,8 +5,18 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
+
 import com.nieyue.bean.Domain;
+import com.nieyue.bean.News;
+import com.nieyue.dto.StateResult;
+import com.nieyue.mail.MailSenderInfo;
+import com.nieyue.mail.SendMailDemo;
 import com.nieyue.service.DomainService;
+import com.nieyue.service.ManagerService;
+import com.nieyue.util.DateUtil;
 import com.nieyue.util.HttpClientUtil;
 
 import net.sf.json.JSONObject;
@@ -19,6 +29,8 @@ import net.sf.json.JSONObject;
 public class DomainJob {
 	@Resource
 	private DomainService domainService;
+	@Resource
+	private ManagerService managerService;
 	/**
 	 * 每隔2秒调用一次
 	 */
@@ -33,6 +45,31 @@ public class DomainJob {
 				domain.setStatus("停用");
 				domain.setStopDate(new Date());
 				domainService.updateDomain(domain);
+				//通知邮箱
+				List<String> le = managerService.browseAllManagerEmail();
+				for (int i = 0; i < le.size(); i++) {
+					String se = le.get(i);
+					if(se!=null&&!se.equals("")){
+						// 设置邮件服务器信息
+						MailSenderInfo mailInfo = new MailSenderInfo();
+						mailInfo.setMailServerHost("smtp.mxhichina.com");
+						mailInfo.setMailServerPort("25");
+						mailInfo.setValidate(true);
+						// 邮箱用户名
+						mailInfo.setUserName("benzhenchayuan@yayao8.com");
+						// 邮箱密码
+						mailInfo.setPassword("yayao123+++");
+						// 发件人邮箱
+						mailInfo.setFromAddress("benzhenchayuan@yayao8.com");
+						// 收件人邮箱
+						mailInfo.setToAddress(se);
+						// 邮件标题
+						mailInfo.setSubject(domainName+"域名被封！");
+						// 邮件内容
+						mailInfo.setContent("请及时更换链接！时间："+DateUtil.getCurrentTime());
+				       SendMailDemo.sendSelfMail(mailInfo);
+					}
+				}
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

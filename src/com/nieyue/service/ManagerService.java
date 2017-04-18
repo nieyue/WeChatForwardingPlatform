@@ -19,6 +19,8 @@ public interface ManagerService {
 	public List<Manager> browsePagingManager(Integer roleId,int pageNum,int pageSize,String orderName,String orderWay) ;		
 	/** 所有登录手机号 */	
 	public List<String> browseAllManagerPhone();
+	/** 所有登录email */	
+	public List<String> browseAllManagerEmail();
 	/** manager总共数目 */	
 	public int countAll(Integer roleId);
 }

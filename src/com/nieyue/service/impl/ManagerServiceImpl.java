@@ -63,5 +63,10 @@ public class ManagerServiceImpl implements ManagerService {
 		boolean b = managerDao.updateManager(manager);
 		return b;
 	}
+	@Override
+	public List<String> browseAllManagerEmail() {
+		List<String> l = managerDao.browseAllManagerEmail();
+		return l;
+	}
 	
 }

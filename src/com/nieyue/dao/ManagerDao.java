@@ -22,6 +22,8 @@ public interface ManagerDao {
 	public List<Manager> browsePagingManager(@Param("roleId")Integer roleId,@Param("pageNum")int pageNum,@Param("pageSize")int pageSize,@Param("orderName")String orderName,@Param("orderWay")String orderWay) ;		
 	/** 所有登录手机号 */	
 	public List<String> browseAllManagerPhone();
+	/** 所有登录email */	
+	public List<String> browseAllManagerEmail();
 	/** manager总共数目 */	
 	public int countAll(@Param("roleId")Integer roleId);	
 }

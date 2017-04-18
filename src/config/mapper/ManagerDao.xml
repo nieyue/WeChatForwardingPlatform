@@ -9,6 +9,7 @@
    INSERT IGNORE INTO
    		 manager_tb (
    		 name,
+   		 email,
    		 manager_phone,
    		 manager_password,
    		 create_date,
@@ -17,6 +18,7 @@
    VALUES
     	 (
     	 #{name},
+    	 #{email},
     	 #{managerPhone},
     	 #{managerPassword},
     	 #{createDate},
@@ -29,6 +31,7 @@
     	manager_tb 
     SET 
     	name=#{name},
+    	email=#{email},
     	manager_phone=#{managerPhone},
     	manager_password=#{managerPassword},
     	create_date=#{createDate},
@@ -42,6 +45,7 @@
     SELECT
 	 	manager_id,
 	 	name,
+	 	email,
 	 	manager_phone,
 	 	manager_password,
 	 	create_date,
@@ -56,6 +60,7 @@
     SELECT
 	    manager_id,
 	    name,
+	    email,
 	 	manager_phone,
 	 	manager_password,
 	 	create_date,
@@ -76,6 +81,12 @@
 <select id="browseAllManagerPhone" resultType="String">  
     SELECT
    		 manager_phone
+	FROM manager_tb
+</select> 
+<!--所有email-->
+<select id="browseAllManagerEmail" resultType="String">  
+    SELECT
+   		 email
 	FROM manager_tb
 </select> 
 	<!-- 统计记录条数 -->

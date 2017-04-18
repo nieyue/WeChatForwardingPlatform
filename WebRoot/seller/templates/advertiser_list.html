@@ -10,6 +10,7 @@
 			<tr>
 			  <th>名称</th>
 			  <th>手机号</th>
+			  <th>email</th>
 			  <th>创建时间</th>
 			  <th>最后登陆时间</th>
 			  <th >操作</th>
@@ -17,6 +18,7 @@
 			<tr ng-repeat="manager in managerList" >
 			  <td ng-bind="manager.name"></td>
 			  <td ng-bind="manager.manager_phone"></td>
+			  <td ng-bind="manager.email"></td>
 			  <td ng-bind="manager.create_date"></td>
 			  <td ng-bind="manager.last_login_date"></td>
 			  <td >

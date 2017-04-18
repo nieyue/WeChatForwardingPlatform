@@ -269,6 +269,20 @@ var myUtils = {
 		var ndate=date.getTime()+1000*60*60*24*n;
 		return new Date(ndate);
 	},
+	  /**
+	   * 获取当前时间到当日23:59:59的时间差
+	   * 单位 秒
+	   * 
+	   */
+	currentToEndTime:function (){  
+			var enddate =new Date();
+			var date=new Date();
+			enddate.setHours(23);
+			enddate.setMinutes(59);
+			enddate.setSeconds(59);
+		 	var miao = (enddate.getTime()-date.getTime())/1000;
+			return miao;
+		},
 	/**
 	 * 获取当前url的参数
 	 * 

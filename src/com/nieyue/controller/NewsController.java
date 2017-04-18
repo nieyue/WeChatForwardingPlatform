@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -335,7 +334,7 @@ public class NewsController {
 	}
 	
 	/**
-	 * 单个新闻加载
+	 * 单个新闻加载 ,增加
 	 * @return
 	 */
 	@RequestMapping(value = "/{newsId}", method = {RequestMethod.GET,RequestMethod.POST})
@@ -365,6 +364,51 @@ public class NewsController {
 		newsService.updateNews(news);
 		return news;
 	}
+	
+	/**
+	 * 单个新闻加载 ,增加
+	 * @return
+	 */
+	@RequestMapping(value = "/click", method = {RequestMethod.GET,RequestMethod.POST})
+	public @ResponseBody News clickNews(
+			@RequestParam(value="newsId") Integer newsId,
+			@RequestParam(value="uv",defaultValue="0",required=false) Integer uv,
+			HttpSession session,HttpServletRequest request)  {
+		News news=new News();
+		news = newsService.loadNews(newsId);
+		//pvs
+		news.setPvs(news.getPvs()+1);
+		//uvs
+		if(uv.equals(1)){
+			news.setUvs(news.getUvs()+1);
+		}
+		//ips
+		int newSize=0;
+		BoundSetOperations<String, String> bso = stringRedisTemplate.boundSetOps("WeChatForwardingPlatformNewsId"+newsId);
+		if(bso.members()!=null && bso.members().size()>0){
+			int oldSize = bso.members().size();
+			bso.add(IPCountUtil.getIpAddr(request));
+			newSize = bso.members().size();
+			//ip增加了
+			if(oldSize<newSize){
+				news.setIps(news.getIps()+1);
+				news.setReadingNumber(news.getReadingNumber()+1);
+			}
+		}else{
+			//bso.expire(DateUtil.currentToEndTime(), TimeUnit.SECONDS);//按天计算有用
+			bso.add(IPCountUtil.getIpAddr(request));
+			newSize=1;
+			news.setIps(Long.valueOf(newSize));
+			news.setReadingNumber(newSize);
+		}
+		if(news.getUnitPrice()==null || news.getUnitPrice().equals("")){
+			news.setUnitPrice(0.0);
+		}
+		news.setNowTotalPrice(Double.valueOf(news.getUnitPrice()*news.getReadingNumber()));
+		newsService.updateNews(news);
+		return news;
+	}
+	
 	/**
 	 * 单个新闻加载DTO
 	 * @return

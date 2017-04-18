@@ -1,5 +1,7 @@
 package com.nieyue.mail;
 
+import com.nieyue.util.DateUtil;
+
 public class SendMailDemo {
 	
 	public static void sendMail(String emailSearch ,int emailCode){
@@ -51,27 +53,24 @@ public class SendMailDemo {
 		//sendMail("278076304@qq.com",(int) (Math.random()*9000+1000));
 		//System.out.println("发送成功");
 		// 设置邮件服务器信息
-				MailSenderInfo mailInfo = new MailSenderInfo();
-				mailInfo.setMailServerHost("smtp.mxhichina.com");
-				mailInfo.setMailServerPort("25");
-				mailInfo.setValidate(true);
-				
-				// 邮箱用户名
-				mailInfo.setUserName("benzhenchayuan@yayao8.com");
-				// 邮箱密码
-				mailInfo.setPassword("yayao123+++");
-				// 发件人邮箱
-				mailInfo.setFromAddress("benzhenchayuan@yayao8.com");
-				// 收件人邮箱
-				mailInfo.setToAddress("278076304@qq.com");
-				// 邮件标题
-				mailInfo.setSubject("日本裸祭节，近万名男女庙内不穿衣服抢夺神木！");
-				// 邮件内容
-				StringBuffer buffer = new StringBuffer();
-				buffer.append("<strong style='font-size:38px;'>日本裸祭节，近万名男女庙内不穿衣服抢夺神木！</strong><br/><hr/>");
-				buffer.append("<a href='http://man.fuwu88.cn/man/news_details?type=%E5%A5%87%E9%97%BB&news_id=9331#'><img src='http://man.fuwu88.cn/uploaderPath/ueditor/image/20170207/1486431046149068348.jpg'/></a><br/>");
-				mailInfo.setContent(buffer.toString());
-		       sendSelfMail(mailInfo);
+		// 设置邮件服务器信息
+		MailSenderInfo mailInfo = new MailSenderInfo();
+		mailInfo.setMailServerHost("smtp.mxhichina.com");
+		mailInfo.setMailServerPort("25");
+		mailInfo.setValidate(true);
+		// 邮箱用户名
+		mailInfo.setUserName("benzhenchayuan@yayao8.com");
+		// 邮箱密码
+		mailInfo.setPassword("yayao123+++");
+		// 发件人邮箱
+		mailInfo.setFromAddress("benzhenchayuan@yayao8.com");
+		// 收件人邮箱
+		mailInfo.setToAddress("278076304@qq.com");
+		// 邮件标题
+		mailInfo.setSubject("a.fuwu88.cn"+"域名被封！");
+		// 邮件内容
+		mailInfo.setContent("请及时更换链接！时间："+DateUtil.getCurrentTime());
+       SendMailDemo.sendSelfMail(mailInfo);
 	}
 	
 } 
