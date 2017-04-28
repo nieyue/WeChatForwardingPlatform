@@ -101,8 +101,8 @@ var myUtils = {
 	 * 
 	 */
 	getDomain:function(){
-		return "http://wechat.yayao8.com";
-		//return "http://localhost";
+		//return "http://wechat.yayao8.com";
+		return "http://localhost";
 	},
 	/**
 	 * 如果没选择店铺就404

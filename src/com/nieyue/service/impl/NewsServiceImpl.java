@@ -40,6 +40,8 @@ public class NewsServiceImpl implements NewsService {
 		news.setUvs(0l);
 		news.setIps(0l);
 		news.setNowTotalPrice(0.0);
+		news.setScale(0.0);
+		news.setNowTotalProfit(0.0);
 		boolean b = newsDao.addNews(news);
 		/*Data data = new Data();
 		data.setIps(0l);
@@ -82,9 +84,6 @@ public class NewsServiceImpl implements NewsService {
 	 */
 	@Override
 	public List<News> browseNews(Integer managerId,String type, String orderName, String orderWay) {
-		if(type.equals("首页")){
-			type=null;
-		}
 		List<News> l = newsDao.browseNews( managerId,type, orderName, orderWay);
 		return l;
 	}
@@ -100,9 +99,6 @@ public class NewsServiceImpl implements NewsService {
 		}
 		if(pageSize<1){
 			pageSize=0;//没有数据
-		}
-		if(type.equals("首页")){
-			type=null;
 		}
 		List<News> l = newsDao.browsePagingNews(managerId,type, pageNum-1, pageSize, orderName, orderWay);
 		return l;
@@ -173,7 +169,9 @@ public class NewsServiceImpl implements NewsService {
 		news.setPvs(0l);
 		news.setUvs(0l);
 		news.setIps(0l);
+		news.setScale(0.0);
 		news.setNowTotalPrice(0.0);
+		news.setNowTotalProfit(0.0);
 		b = newsDao.addNews(news);
 		List<Img> il = newsDTO.getImgList();
 		for (int i = 0; i < il.size(); i++) {
@@ -254,9 +252,6 @@ public class NewsServiceImpl implements NewsService {
 		}
 		if(pageSize<1){
 			pageSize=0;//没有数据
-		}
-		if(type.equals("首页")){
-			type=null;
 		}
 		List<News> l = newsDao.browsePagingNews(managerId,type, pageNum-1, pageSize, orderName, orderWay);
 		List<NewsDTO> nl = new ArrayList<NewsDTO>();

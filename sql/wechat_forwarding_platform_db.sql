@@ -34,17 +34,20 @@ news_id int(11) NOT NULL AUTO_INCREMENT COMMENT '新闻id',
 type varchar(255) COMMENT '类别',
 title varchar(255) COMMENT '标题',
 time timestamp COMMENT '时间',
-fixed_recommend tinyint(4) COMMENT '是否置顶 默认否',
-is_recommend tinyint(4) COMMENT '是否推荐 默认否',
+fixed_recommend tinyint(4) DEFAULT 0  COMMENT '是否置顶 默认否',
+is_recommend tinyint(4) DEFAULT 0 COMMENT '是否推荐 默认否',
 img_address varchar(255) COMMENT '图片地址',
 content longtext COMMENT '文章内容',
-unit_price decimal(11,2) COMMENT '广告主单价',
-total_price decimal(11,2) COMMENT '广告主总价',
+unit_price decimal(11,2) DEFAULT 0 COMMENT '广告主单价',
+total_price decimal(11,2) DEFAULT 0 COMMENT '广告主总价',
 reading_number int(11) DEFAULT 0 COMMENT '阅读数',
+now_total_price decimal(11,2) DEFAULT 0 COMMENT '消耗金额',
+unit_profit decimal(11,2) DEFAULT 0 COMMENT '渠道主单价',
+now_total_profit decimal(11,2) DEFAULT 0 COMMENT '渠道主收益',
+scale decimal(11,2) DEFAULT 0 COMMENT '扣量比例',
 pvs bigint(20) DEFAULT 0 COMMENT 'pvs',
 uvs bigint(20) DEFAULT 0 COMMENT 'uvs',
 ips bigint(20) DEFAULT 0 COMMENT 'ips',
-now_total_price decimal(11,2) COMMENT '消耗金额',
 status varchar(255) COMMENT '状态',
 manager_id int(11) COMMENT '管理员id外键',
 PRIMARY KEY (news_id)
@@ -63,13 +66,14 @@ CONSTRAINT FK_NEWS_IMG FOREIGN KEY (news_id) REFERENCES news_tb (news_id) ON DEL
 #创建数据表 
 CREATE TABLE data_tb(
 data_id int(11) NOT NULL AUTO_INCREMENT COMMENT '数据id',
-pvs bigint(20) COMMENT 'pvs',
-uvs bigint(20) COMMENT 'uvs',
-ips bigint(20) COMMENT 'ips',
-create_date datetime COMMENT '创建时间',
+pvs bigint(20) DEFAULT 0 COMMENT 'pvs',
+uvs bigint(20) DEFAULT 0 COMMENT 'uvs',
+ips bigint(20) DEFAULT 0 COMMENT 'ips',
+create_date date COMMENT '创建时间',
 news_id int(11) COMMENT '新闻id,外键',
 PRIMARY KEY (data_id),
-CONSTRAINT FK_NEWS_DATA FOREIGN KEY (news_id) REFERENCES news_tb (news_id) ON DELETE CASCADE ON UPDATE CASCADE
+CONSTRAINT FK_NEWS_DATA FOREIGN KEY (news_id) REFERENCES news_tb (news_id) ON DELETE CASCADE ON UPDATE CASCADE,
+UNIQUE INDEX idx_data_newsid_create_date (create_date,news_id) USING BTREE
 )ENGINE = InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8 COMMENT='数据表';
 
 #创建广告位表

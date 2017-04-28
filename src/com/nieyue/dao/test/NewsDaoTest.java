@@ -27,8 +27,14 @@ public class NewsDaoTest {
 	}
 	@Test
 	public void  listnews(){
-		List<News> l = newsDao.browseNews(null,"体育", "news_id", "asc");
+		List<News> l = newsDao.browseNews(null,null, "news_id", "asc");
+		System.out.println(l.get(0));
 		System.out.println(l.size());
+	}
+	@Test
+	public void  listnews1(){
+		List<String> l = newsDao.browseTypeNews(null);
+		System.out.println(l.get(0));
 	}
 	@Test
 	public void  testLoadNews(){

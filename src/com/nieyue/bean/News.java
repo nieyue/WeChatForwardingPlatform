@@ -22,6 +22,9 @@ public class News implements Serializable {
 	private Double totalPrice;
 	private Integer readingNumber;
 	private Double nowTotalPrice;
+	private Double unitProfit;
+	private Double nowTotalProfit;
+	private Double scale;
 	private Long pvs;
 	private Long uvs;
 	private Long ips;
@@ -135,9 +138,28 @@ public class News implements Serializable {
 	public void setIps(Long ips) {
 		this.ips = ips;
 	}
+	public Double getUnitProfit() {
+		return unitProfit;
+	}
+	public void setUnitProfit(Double unitProfit) {
+		this.unitProfit = unitProfit;
+	}
+	public Double getNowTotalProfit() {
+		return nowTotalProfit;
+	}
+	public void setNowTotalProfit(Double nowTotalProfit) {
+		this.nowTotalProfit = nowTotalProfit;
+	}
+	public Double getScale() {
+		return scale;
+	}
+	public void setScale(Double scale) {
+		this.scale = scale;
+	}
 	public News(Integer newsId, String type, String title, Integer isRecommend, Integer fixedRecommend, Date time,
 			String imgAddress, String content, Double unitPrice, Double totalPrice, Integer readingNumber,
-			Double nowTotalPrice, Long pvs, Long uvs, Long ips, String status, Integer managerId) {
+			Double nowTotalPrice, Double unitProfit, Double nowTotalProfit, Double scale, Long pvs, Long uvs, Long ips,
+			String status, Integer managerId) {
 		super();
 		this.newsId = newsId;
 		this.type = type;
@@ -151,11 +173,24 @@ public class News implements Serializable {
 		this.totalPrice = totalPrice;
 		this.readingNumber = readingNumber;
 		this.nowTotalPrice = nowTotalPrice;
+		this.unitProfit = unitProfit;
+		this.nowTotalProfit = nowTotalProfit;
+		this.scale = scale;
 		this.pvs = pvs;
 		this.uvs = uvs;
 		this.ips = ips;
 		this.status = status;
 		this.managerId = managerId;
 	}
+	@Override
+	public String toString() {
+		return "News [newsId=" + newsId + ", type=" + type + ", title=" + title + ", isRecommend=" + isRecommend
+				+ ", fixedRecommend=" + fixedRecommend + ", time=" + time + ", imgAddress=" + imgAddress + ", content="
+				+ content + ", unitPrice=" + unitPrice + ", totalPrice=" + totalPrice + ", readingNumber="
+				+ readingNumber + ", nowTotalPrice=" + nowTotalPrice + ", unitProfit=" + unitProfit
+				+ ", nowTotalProfit=" + nowTotalProfit + ", scale=" + scale + ", pvs=" + pvs + ", uvs=" + uvs + ", ips="
+				+ ips + ", status=" + status + ", managerId=" + managerId + "]";
+	}
+
 	
 }

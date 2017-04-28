@@ -12,31 +12,26 @@
 	http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache-4.2.xsd
 	 ">
  	<!-- 配置自定义的时间任务(Job) -->  
-<bean id="myJob" class="com.nieyue.quartz.DomainJob" />
+<bean id="domainJob" class="com.nieyue.quartz.DomainJob" />
  	<!-- 配置方法调用任务工厂(XXXJobDetailFactoryBean) --> 
- 	 <bean name="simpleJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
- 		<property name="targetObject" ref="myJob"></property>
- 		<property name="targetMethod">
- 				<value>doGetApps</value>
- 		</property>
- 	</bean> 
- 	<bean name="myJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
- 		<property name="targetObject" ref="myJob"></property>
+ 	 <bean name="domainJobMethod" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+ 		<property name="targetObject" ref="domainJob"></property>
  		<property name="targetMethod">
  				<value>doGetApps</value>
  		</property>
  	</bean> 
  	<!-- 配置Simple触发器(SimpleTriggerFactoryBean) --> 
-	<bean name="simpleTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
-    	<property name="jobDetail" ref="simpleJob"/>
+	<bean name="domainJobTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
+    	<property name="jobDetail" ref="domainJobMethod"/>
     	<property name="startDelay" value="5000"/>
-    	 <property name="repeatInterval" value="2000"/>
+    	<!--  <property name="repeatInterval" value="12000"/> -->
+    	 <property name="repeatCount" value="0"/>
 	</bean> 
 	<!-- 配置Cron触发器(CronTriggerFactoryBean) -->  
     <bean id="myJobTrigger"  
         class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">  
         <property name="jobDetail">  
-            <ref bean="myJobDetail" />  
+            <ref bean="newsJobMethod" />  
         </property>  
         <property name="cronExpression">  
            <!--  每隔一秒钟执行一次   -->
@@ -50,8 +45,7 @@
  	<bean name="schedulerFactory" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
     <property name="triggers">
         <list>
-             <ref bean="simpleTrigger"/> 
-            <!-- <ref bean="myJobTrigger"/> -->
+             <ref bean="domainJobTrigger"/> 
         </list>
     </property>
 </bean>

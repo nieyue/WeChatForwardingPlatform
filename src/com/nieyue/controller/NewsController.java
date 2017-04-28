@@ -3,7 +3,9 @@ package com.nieyue.controller;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.nieyue.bean.Data;
 import com.nieyue.bean.News;
 import com.nieyue.comments.IPCountUtil;
 import com.nieyue.comments.MyJoup;
@@ -31,9 +34,11 @@ import com.nieyue.dto.NewsDTO;
 import com.nieyue.dto.StateResult;
 import com.nieyue.mail.MailSenderInfo;
 import com.nieyue.mail.SendMailDemo;
+import com.nieyue.service.DataService;
 import com.nieyue.service.NewsService;
 import com.nieyue.util.DateUtil;
 import com.nieyue.util.FileUploadUtil;
+import com.nieyue.util.MyJson;
 import com.nieyue.util.UploaderPath;
 
 import net.sf.json.JSONObject;
@@ -50,6 +55,10 @@ public class NewsController {
 	private NewsService newsService;
 	@Resource
 	private StringRedisTemplate stringRedisTemplate;
+	@Resource
+	private DataService dataService;
+	@Resource
+	private MyJson myJson;
 	
 	/**
 	 * 分页浏览所有新闻
@@ -339,8 +348,7 @@ public class NewsController {
 	 */
 	@RequestMapping(value = "/{newsId}", method = {RequestMethod.GET,RequestMethod.POST})
 	public @ResponseBody News loadNews(@PathVariable("newsId") Integer newsId,HttpSession session,HttpServletRequest request)  {
-		News news=new News();
-		news = newsService.loadNews(newsId);
+		News news = newsService.loadNews(newsId);
 		int newSize=0;
 		BoundSetOperations<String, String> bso = stringRedisTemplate.boundSetOps("WeChatForwardingPlatformNewsId"+newsId);
 		if(bso.members()!=null && bso.members().size()>0){
@@ -366,11 +374,63 @@ public class NewsController {
 	}
 	
 	/**
-	 * 单个新闻加载 ,增加
+	 * 点击新闻
 	 * @return
 	 */
 	@RequestMapping(value = "/click", method = {RequestMethod.GET,RequestMethod.POST})
+	public void clickNews(
+			@RequestParam(value="newsId") Integer newsId,
+			@RequestParam(value="uv",defaultValue="0",required=false) Integer uv,
+			HttpSession session,HttpServletRequest request)  {
+		//redis整个每日data数据
+//BoundValueOperations<String, String> bvodata = stringRedisTemplate.boundValueOps("WeChatForwardingPlatformNewsId"+newsId+"Data"+DateUtil.getImgDir());
+//每日ip
+BoundSetOperations<String, String> bsodataips = stringRedisTemplate.boundSetOps("WeChatForwardingPlatformNewsId"+newsId+"Data"+DateUtil.getImgDir()+"Ips");
+			Data data=new Data();
+			data.setCreateDate(new Date());
+			data.setNewsId(newsId);
+			//ips 
+			bsodataips.add(IPCountUtil.getIpAddr(request));//ip存入redis数据库
+			bsodataips.expire(DateUtil.currentToEndTime(), TimeUnit.SECONDS);//按天计算有用
+			dataService.saveOrUpdateData(data,uv, bsodataips.members().size());
+			//data = (Data)JSONObject.toBean(JSONObject.fromObject(bvodata.get()),Data.class);//redis json字符串转Data类型
+			//redis存储更新
+			//JSONObject jsondata = JSONObject.fromObject(data,myJson.getJsonConfig());
+			//bvodata.set(jsondata.toString());
+		return ;
+	}
+	
+	
+	/**
+	 * 单个新闻加载 ,增加
+	 * @return
+	 */
+	@RequestMapping(value = "/get", method = {RequestMethod.GET,RequestMethod.POST})
 	public @ResponseBody News clickNews(
+			@RequestParam(value="newsId") Integer newsId,
+			HttpSession session)  {
+		News news = newsService.loadNews(newsId);
+		return news;
+	}
+	
+	/**
+	 * 单个新闻加载DTO
+	 * @return
+	 */
+	@RequestMapping(value = "/dto/{newsId}", method = {RequestMethod.GET,RequestMethod.POST})
+	public @ResponseBody NewsDTO loadNewsDTO(@PathVariable("newsId") Integer newsId,HttpSession session)  {
+		NewsDTO newsDTO=new NewsDTO();
+		newsDTO = newsService.loadNewsDTO(newsId);
+		return newsDTO;
+	}
+	
+	
+	/**
+	 * 单个新闻加载 ,增加
+	 * @return
+	 */
+	@RequestMapping(value = "/oldclick", method = {RequestMethod.GET,RequestMethod.POST})
+	public @ResponseBody News clickNewsOld(
 			@RequestParam(value="newsId") Integer newsId,
 			@RequestParam(value="uv",defaultValue="0",required=false) Integer uv,
 			HttpSession session,HttpServletRequest request)  {
@@ -407,17 +467,6 @@ public class NewsController {
 		news.setNowTotalPrice(Double.valueOf(news.getUnitPrice()*news.getReadingNumber()));
 		newsService.updateNews(news);
 		return news;
-	}
-	
-	/**
-	 * 单个新闻加载DTO
-	 * @return
-	 */
-	@RequestMapping(value = "/dto/{newsId}", method = {RequestMethod.GET,RequestMethod.POST})
-	public @ResponseBody NewsDTO loadNewsDTO(@PathVariable("newsId") Integer newsId,HttpSession session)  {
-		NewsDTO newsDTO=new NewsDTO();
-		newsDTO = newsService.loadNewsDTO(newsId);
-		return newsDTO;
 	}
 	/**
 	 * 查询所有类型 去空 去重

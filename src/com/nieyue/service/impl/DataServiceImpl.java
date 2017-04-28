@@ -32,8 +32,8 @@ public class DataServiceImpl implements DataService{
 	}
 
 	@Override
-	public Data loadData(Integer dataId) {
-		Data r = dataDao.loadData(dataId);
+	public Data loadData(Integer dataId,Integer newsId,Date createDate) {
+		Data r = dataDao.loadData(dataId, newsId, createDate);
 		return r;
 	}
 
@@ -54,6 +54,11 @@ public class DataServiceImpl implements DataService{
 		}
 		List<Data> l = dataDao.browsePagingData(pageNum-1, pageSize, orderName, orderWay);
 		return l;
+	}
+	@Override
+	public boolean saveOrUpdateData(Data data,int uv,int ip) {
+		boolean b = dataDao.saveOrUpdateData(data,uv,ip);
+		return b;
 	}
 
 	

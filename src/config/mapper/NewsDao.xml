@@ -17,10 +17,13 @@
    		 unit_price,
    		 total_price,
    		 reading_number,
+   		 now_total_price,
+   		 unit_profit,
+   		 now_total_profit,
+   		 scale,
    		 pvs,
    		 uvs,
    		 ips,
-   		 now_total_price,
    		 status,
    		 manager_id)
    VALUES
@@ -34,10 +37,13 @@
     	 #{unitPrice},
     	 #{totalPrice},
     	 #{readingNumber},
+    	 #{nowTotalPrice},
+    	 #{unitProfit},
+    	 #{nowTotalProfit},
+    	 #{scale},
     	 #{pvs},
     	 #{uvs},
     	 #{ips},
-    	 #{nowTotalPrice},
     	 #{status},
     	 #{managerId})  
 </insert>  
@@ -57,10 +63,13 @@
     	unit_price=#{unitPrice},
     	total_price=#{totalPrice},
     	reading_number=#{readingNumber},
+    	now_total_price=#{nowTotalPrice},
+    	unit_profit=#{unitProfit},
+    	now_total_profit=#{nowTotalProfit},
+    	scale=#{scale},
     	pvs=#{pvs},
     	uvs=#{uvs},
     	ips=#{ips},
-    	now_total_price=#{nowTotalPrice},
     	status=#{status},
     	manager_id=#{managerId}
     WHERE
@@ -91,10 +100,13 @@ SELECT
     	unit_price,
     	total_price,
     	reading_number,
+    	now_total_price,
+    	unit_profit,
+   		 now_total_profit,
+   		 scale,
     	 pvs,
    		 uvs,
    		 ips,
-    	now_total_price,
     	status,
     	manager_id
 FROM news_tb 
@@ -114,10 +126,13 @@ WHERE news_id=#{newsId}
     	unit_price,
     	total_price,
     	reading_number,
+    	now_total_price,
+    	unit_profit,
+   		 now_total_profit,
+   		 scale,
     	 pvs,
    		 uvs,
    		 ips,
-    	now_total_price,
     	status,
     	manager_id
 	FROM news_tb
@@ -148,10 +163,13 @@ WHERE news_id=#{newsId}
     	unit_price,
     	total_price,
     	reading_number,
+    	now_total_price,
+    	unit_profit,
+   		 now_total_profit,
+   		 scale,
     	 pvs,
    		 uvs,
    		 ips,
-    	now_total_price,
     	status,
     	manager_id
 	FROM news_tb
@@ -182,10 +200,13 @@ WHERE news_id=#{newsId}
     	unit_price,
     	total_price,
     	reading_number,
+    	now_total_price,
+    	unit_profit,
+   		 now_total_profit,
+   		 scale,
     	 pvs,
    		 uvs,
    		 ips,
-    	now_total_price,
     	status,
     	manager_id
 	FROM news_tb
@@ -214,10 +235,13 @@ WHERE news_id=#{newsId}
     	unit_price,
     	total_price,
     	reading_number,
+    	now_total_price,
+    	unit_profit,
+   		 now_total_profit,
+   		 scale,
     	 pvs,
    		 uvs,
    		 ips,
-    	now_total_price,
     	status,
     	manager_id
 FROM news_tb 
@@ -243,10 +267,13 @@ ORDER BY time desc LIMIT #{pageNum},#{pageSize};
     	unit_price,
     	total_price,
     	reading_number,
+    	now_total_price,
+    	unit_profit,
+   		 now_total_profit,
+   		 scale,
     	 pvs,
    		 uvs,
    		 ips,
-    	now_total_price,
     	status,
     	manager_id
 FROM news_tb 
@@ -272,10 +299,13 @@ ORDER BY time desc LIMIT #{pageNum},#{pageSize};
     	unit_price,
     	total_price,
     	reading_number,
+    	now_total_price,
+    	unit_profit,
+   		 now_total_profit,
+   		 scale,
     	 pvs,
    		 uvs,
    		 ips,
-    	now_total_price,
     	status,
     	manager_id
 FROM news_tb  AS t1 

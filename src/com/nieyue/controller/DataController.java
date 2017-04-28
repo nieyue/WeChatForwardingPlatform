@@ -1,6 +1,7 @@
 package com.nieyue.controller;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -65,6 +66,24 @@ public class DataController {
 		return StateResult.getSR(am);
 	}
 	/**
+	 * 数据增加或更新
+	 * @return 
+	 */
+	@RequestMapping(value = "/saveOrUpdate", method = {RequestMethod.GET,RequestMethod.POST})
+	public @ResponseBody StateResult addOrUpdateData(
+			@ModelAttribute Data data,
+			@RequestParam(value="uv",defaultValue="0",required=false)int uv,
+			@RequestParam(value="ip",defaultValue="0",required=false)int ip,
+			HttpSession session) {
+		System.out.println("dataId"+data.getDataId());
+		System.out.println("newsId"+data.getNewsId());
+		System.out.println("createDate"+data.getCreateDate());
+		System.out.println("uv"+uv);
+		System.out.println("ip"+ip);
+		boolean am = dataService.saveOrUpdateData(data,uv,ip);
+		return StateResult.getSR(am);
+	}
+	/**
 	 * 数据删除
 	 * @return
 	 */
@@ -86,10 +105,13 @@ public class DataController {
 	 * 数据单个加载
 	 * @return
 	 */
-	@RequestMapping(value = "/{dataId}", method = {RequestMethod.GET,RequestMethod.POST})
-	public @ResponseBody Data loadData(@PathVariable("dataId") Integer dataId,HttpSession session)  {
-		Data data=new Data();
-			data = dataService.loadData(dataId);
+	@RequestMapping(value = "/get", method = {RequestMethod.GET,RequestMethod.POST})
+	public @ResponseBody Data loadData(
+			@RequestParam(value="dataId",required=false)Integer dataId,
+			@RequestParam(value="newsId",required=false)Integer newsId,
+			@RequestParam(value="createDate",required=false)Date createDate,
+			HttpSession session)  {
+		Data data = dataService.loadData(dataId, newsId, createDate);
 		return data;
 	}
 	

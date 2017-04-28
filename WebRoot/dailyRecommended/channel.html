@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>数据</title>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport"
+	content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+<meta name="keywords" content="数据列表">
+<meta charset="UTF-8">
+<meta name="description"
+	content="数据列表">
+<link href="/resources/css/bootstrap.min.css" rel="stylesheet">
+<link href="/resources/css/sellerbase.css" rel="stylesheet">
+<style>
+</style>
+</head>
+
+<body ng-app="indexApp">
+	<div ng-controller="indexCtrl" >
+<div style="margin:10px;">
+	 <label  class="text-danger" style="font-size:30px;color:#ccc;">数据</label>
+	
+</div>
+<!-- 数据列表选择end -->
+<!-- 数据列表 -->
+  	<div style="width:100%" ">
+			<table class="table table-bordered" style="width:100%;background-color: #fff;">
+			<tr>
+			  <th >标题</th>
+			  <th >类型</th>
+			  <th>图片</th>
+			  <th >单价</th>
+			  <th >阅读数</th>
+			  <th >收益</th>
+			  <th >PV</th>
+			  <th >UV</th>
+			  <th >IP</th>
+			  <th >更新日期</th> 
+			</tr>
+			<tr >
+			  <td ng-bind="newsdto.news.title"></td> 
+			  <td ng-bind="newsdto.news.type"></td>
+			  <td>
+			  <a ng-repeat="img in newsdto.img_list" href="/dailyRecommended/news_details?type={{newsdto.news.type}}&news_id={{newsdto.news.news_id}}">
+				 <img class=" comment-list-item-img " style="margin-top:3px;"
+					ng-src="{{img.img_address}}" >
+				</a>
+			  </td>
+			  <td style="color:red;" ng-bind="newsdto.news.unit_price  ||'0.00' | number:2"></td>
+			   <td ng-bind="newsdto.news.reading_number||'0'"></td> 
+			  <td style="color:red;" ng-bind="newsdto.news.now_total_price ||'0.00' | number:2"></td>
+			  <td ng-bind="newsdto.news.pvs||'0'"></td>
+			  <td ng-bind="newsdto.news.uvs ||'0'"></td> 
+			  <td ng-bind="newsdto.news.ips ||'0'"></td>
+			  <td ng-bind="newsdto.news.time"></td>
+			</tr>
+			</table>
+		</div>
+		
+<!-- 数据列表end -->
+</div>
+	<!-- 页面列表end -->
+	<script src="/resources/js/jquery2.1.js"></script>
+	<script src="/resources/js/bootstrap3.2.0.js"></script>
+	<script src="/resources/js/angularjs.min.1.5.7.js"></script>
+	<script src="/resources/js/base.js"></script>
+	<script>
+	$(function(){
+	//获取data-src
+	$("img").each(function(index){
+		if($(this).attr("data-src")){
+			$(this).attr("src",$(this).attr("data-src"));
+		}
+	});
+	//$("#loadAnimationBody").css("display","none");
+	});
+    	var indexApp=angular.module('indexApp',[]);
+    	  indexApp.filter("dateDiff",function(){
+                return function(dateTimeStamp){
+                    return myUtils.getDateDiff(dateTimeStamp);
+                }
+            });
+       
+					
+    	indexApp.controller('indexCtrl',function($scope){
+    	
+        //初始化
+  $.get(myUtils.getDomain()+"/news/dto/"+myUtils.GetQueryString("news_id"),function(dto){
+  console.log(dto)
+           $scope.newsdto=dto;
+         //  $scope.showNoticeListIcon=false;
+			$scope.$apply();
+       });
+
+    	});
+    </script>
+</body>
+</html>

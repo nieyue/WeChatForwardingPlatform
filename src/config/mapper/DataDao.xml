@@ -35,6 +35,33 @@
     WHERE
     	 data_id=#{dataId} 
 </update> 
+<!-- 存储或更新数据 -->
+<insert id="saveOrUpdateData" >  
+    INSERT IGNORE INTO
+   		  data_tb 
+   		 (
+   		 data_id,
+   		 pvs,
+   		 uvs,
+   		 ips,
+   		create_date,
+   		 news_id
+   		 )
+   VALUES
+    	 (
+    	 #{Data.dataId},
+    	 1,
+    	 1,
+    	 1,
+    	<!--  DATE(#{Data.createDate}), -->
+    	  CURDATE(),
+    	 #{Data.newsId}
+    	 )
+     ON DUPLICATE KEY UPDATE
+    	pvs=pvs+1,
+    	uvs=uvs+#{uv},
+    	ips=#{ip}  
+</insert> 
 <!-- 删除数据-->
 <delete id="delData"  parameterType="Integer" >  
     DELETE FROM
@@ -51,7 +78,17 @@ SELECT
    		 create_date,
    		 news_id
 FROM data_tb 
-WHERE data_id=#{dataId}
+<where>
+<if test="dataId!=null">
+data_id=#{dataId}
+</if>
+<if test="newsId!=null">
+news_id=#{newsId}
+</if>
+<if test="createDate!=null">
+DATE(create_date)=DATE(#{createDate})
+</if>
+</where>
 </select>
 
 <!-- 分页查询数据-->

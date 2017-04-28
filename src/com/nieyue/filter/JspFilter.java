@@ -44,6 +44,8 @@ public class JspFilter implements Filter{
         servletResponse.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
         servletResponse.setHeader("Access-Control-Max-Age", "3600");
         servletResponse.setHeader("Access-Control-Allow-Headers", "x-requested-with");
+        
+        //servletResponse=MyOriginUtil.getOriginPugin(servletRequest, servletResponse);//origin配置
         //chain.doFilter(request, response);
         // 获得用户请求的http://localhost:8080/YaYaoMall/mall/mobile/index
         // 获得用户请求的http://localhost:8080/mall/mobile/indexp

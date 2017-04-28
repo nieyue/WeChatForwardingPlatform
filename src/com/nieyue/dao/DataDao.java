@@ -1,5 +1,6 @@
 package com.nieyue.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
@@ -18,8 +19,10 @@ public interface DataDao {
 	public boolean delData(Integer dataId) ;
 	/** 更新数据*/	
 	public boolean updateData(Data data);
+	/** 新增或更新数据*/	
+	public boolean saveOrUpdateData(@Param("Data")Data data,@Param("uv")int uv,@Param("ip")int ip);
 	/** 装载数据 */	
-	public Data loadData(Integer dataId);	
+	public Data loadData(@Param("dataId")Integer dataId,@Param("newsId")Integer newsId,@Param("createDate")Date createDate);	
 	/** 数据总共数目 */	
 	public int countAll();	
 	/** 分页数据信息 */

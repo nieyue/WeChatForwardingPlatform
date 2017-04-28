@@ -5,6 +5,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
+import java.util.Date;
+
 import javax.annotation.Resource;
 
 import org.junit.Before;
@@ -64,7 +66,9 @@ public class UserControllerTest {
 		 //url="/news/list/random?pageSize=10";//list
 		//url="/news/types";//type list
 		//url="/thirdapi/weather";//type list
-		url="/thirdapi/xinlangweather?cityAddress=长沙";//type list
+		//url="/thirdapi/xinlangweather?cityAddress=长沙";//type list
+		url="/data/saveOrUpdate?createDate="+new Date().toLocaleString()+"&newsId=6592&uv=2&ip=3";//type list
+		//url="/data/saveOrUpdate?newsId=6582&uv=1&ip=1";//type list
 		if(type.equals(0)){
 		this.mvc.perform(get(url))
 		//.andExpect(status().isOk())
