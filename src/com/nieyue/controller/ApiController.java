@@ -27,6 +27,7 @@ import com.nieyue.util.MyThirdAPIUtil;
 public class ApiController {
 	@Resource
 	AlmanacService almanacService;
+	
 	/**
 	 * 根据地名获取新浪天气
 	 * @author Administrator

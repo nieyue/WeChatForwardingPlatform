@@ -42,7 +42,6 @@
         <property name="cookieName" value="JSESSIONID"/>
         <property name="domainNamePattern" value="^.+?\\.(\\w+\\.[a-z]+)$"/>
     </bean> -->
-    <!-- 主 -->
 	<bean id="jedisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">  
 	    <!-- redis 配置 -->
 	    <property name="hostName" value="${redis.host}"/>
@@ -52,22 +51,9 @@
 	     <property name="poolConfig" ref="jedisPoolConfig" />
 	    <property name="usePool" value="${redis.usePool}" />
 	</bean> 
-	<!-- 从 -->
-	<!-- <bean id="jedisConnectionFactorySlave" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">  
-	    redis 配置
-	    <property name="hostName" value="${redis-slave.host}"/>
-	    <property name="port" value="${redis-slave.port}"/>
-	    <property name="password" value="${redis-slave.password}"/>
-	    <property name="timeout" value="${redis-slave.timeout}"/>
-	     <property name="poolConfig" ref="jedisPoolConfig" />
-	    <property name="usePool" value="${redis-slave.usePool}" />
-	</bean>  -->
 	<bean id="stringRedisTemplate" class="org.springframework.data.redis.core.StringRedisTemplate">
 	    <property name="connectionFactory" ref="jedisConnectionFactory" />
 	</bean>
-	<!-- <bean id="stringRedisTemplateSlave" class="org.springframework.data.redis.core.StringRedisTemplate">
-	    <property name="connectionFactory" ref="jedisConnectionFactorySlave" />
-	</bean> -->
      <!-- 配置redis session  -->
      <bean class="org.springframework.session.data.redis.config.annotation.web.http.RedisHttpSessionConfiguration">
      <property name="maxInactiveIntervalInSeconds" value="600"></property>

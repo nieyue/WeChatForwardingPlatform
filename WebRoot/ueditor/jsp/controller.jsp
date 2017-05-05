@@ -10,10 +10,12 @@
 	
 	String rootPath = application.getRealPath( "/" );
 	String uploaderPath=request.getParameter("uploaderPath");
+	System.out.println("rootPath="+rootPath);
 	System.out.println("uploaderPath="+request.getParameter("uploaderPath"));
 	//String rootPath = "c:/";
 	//String action = request.getParameter("action");
 	String result = new ActionEnter( request,uploaderPath, rootPath ).exec();
+	 System.out.println("result="+result);
 	 /*  if( action!=null && 
 	   (action.equals("listfile") || action.equals("listimage") ) ){
 	    rootPath = rootPath.replace("\\", "/");

@@ -53,9 +53,12 @@ public class MyFile implements Runnable {
 				 long start = System.currentTimeMillis();
 				System.out.println(start);
 				//delFile("D:/nieyue/tomcat/apache-tomcat-7.0.57-windows-x64/apache-tomcat-7.0.57/webapps/YaYaoXiangXiu/merchandisePicture/embroideryDetails","1448008547新浪扶冀.jpg");
-				String adminIMGSPath="D:/nieyue/GIT/1/YaYaoMall/YaYaoMall/WebRoot/resources/adminUpload/1/黑茶/百两茶/百两茶_01.jpg";
+				//String adminIMGSPath="D:/nieyue/GIT/1/YaYaoMall/YaYaoMall/WebRoot/resources/adminUpload/1/黑茶/百两茶/百两茶_01.jpg";
+				//String adminIMGSPath="C:\\uploaderPath\\img\\a.jpg";
+				String adminIMGSPath="http://union.yayao8.com/uploaderPath/img/a.jpg";
 				try {
-					imageRW(adminIMGSPath, "D:/cha.png", "jpg");
+					//imageRW(adminIMGSPath, "D:/cha.png", "jpg");
+					createSlefFile(adminIMGSPath);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
